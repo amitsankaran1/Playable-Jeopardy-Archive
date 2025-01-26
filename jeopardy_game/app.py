@@ -32,7 +32,7 @@ def seasons():
     """).fetchall()
     return render_template('seasons.html', seasons=seasons)
 
-@app.route('/season/<int:season_id>')
+@app.route('/season/<season_id>')
 def season_games(season_id):
     """Display all games for a specific season, ordered by game_number."""
     db = get_db()

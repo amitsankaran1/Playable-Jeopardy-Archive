@@ -167,6 +167,6 @@ def process_folder(folder_path, db_path):
 
 # Main function
 if __name__ == "__main__":
-    folder_path = '/Users/amitsankaran/Documents/Code Projects/Playable Jeopardy Archive/jeopardy_seasons'  # Update this path to your HTML files directory
+    folder_path = '/Users/amitsankaran/Documents/Code Projects/Playable Jeopardy Archive/jeopardy_seasons_full'  # Update this path to your HTML files directory
     db_path = '/Users/amitsankaran/Documents/Code Projects/Playable Jeopardy Archive/jeopardy_game/jeopardy.db' # Update this path to your database file
     process_folder(folder_path, db_path)

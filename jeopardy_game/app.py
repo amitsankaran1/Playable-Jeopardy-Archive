@@ -1,10 +1,16 @@
 from flask import Flask, render_template, g, abort
 import sqlite3
 
+from pathlib import Path
+
+# Get the directory where the current script resides
+BASE_DIR = Path(__file__).parent.resolve()
+
+# Construct the path to the database file relative to this directory
+DATABASE = BASE_DIR / 'jeopardy.db'
+
 app = Flask(__name__)
 
-# Path to the database file
-DATABASE = '/Users/amitsankaran/Documents/Code Projects/Playable Jeopardy Archive/jeopardy_game/jeopardy.db'
 
 def get_db():
     """Connect to the database and set up row factory for dict-like access."""

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jeopardy Seasons</title>
+</head>
+<body>
+    <h1>Jeopardy Seasons</h1>
+    <ul>
+        {% for season in seasons %}
+            <li>
+                <a href="/season/{{ season['season_id'] }}">Season {{ season['season_id'] }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Season {{ season_id }} Games</title>
+</head>
+<body>
+    <h1>Season {{ season_id }}</h1>
+    <ul>
+        {% for game in games %}
+            <li>
+                <a href="/game/{{ game['id'] }}">
+                    Game #{{ game['game_number'] }} - {{ game['title'] }} ({{ game['date'] }})
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="/">Back to Seasons</a>
+</body>
+</html>

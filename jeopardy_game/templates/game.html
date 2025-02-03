@@ -46,4 +46,31 @@
                 </tr>
                 {% for row in range(5) %}
                 <tr>
-                    {% for category in catego
+                    {% for category in categories %}
+                        {% set clues = clues_by_category[category.category_id] %}
+                        <td>
+                            {% if row < clues|length %}
+                            <ul>
+                                {% set is_daily_double = clues[row].is_daily_double %}
+                                <li class="{% if is_daily_double %}daily-double{% endif %}" 
+                                    data-question="{{ clues[row].question }}" 
+                                    data-answer="{{ clues[row].answer }}">
+                                    <span class="value">${{ board_values[row] }}</span>
+                                </li>
+                            </ul>
+                            {% else %}
+                            &nbsp;
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <script src="/static/js/game.js"></script>
+
+</body>
+</html>

@@ -10,9 +10,12 @@
 <body>
     <h1>Jeopardy Game</h1>
 
+    {% set board_values = [200, 400, 600, 800, 1000] %}
+
     {% for round_name, categories in grouped_categories.items() %}
     <div class="round">
         <h2>{{ round_name }}</h2>
+        
         {% if round_name == 'Final Jeopardy' %}
             {% if categories %}
                 <table>
@@ -21,12 +24,11 @@
                     </tr>
                     <tr>
                         <td>
-                            {% set clue = clues_by_category[categories[0].category_id][0] %}
                             <ul>
-                                <li>
-                                    <strong>Question:</strong> {{ clue.question }}<br>
-                                    <strong>Answer:</strong> {{ clue.answer }}
-                                    <em>(Final Jeopardy)</em>
+                                <li class="final-jeopardy-clue" 
+                                    data-question="{{ clues_by_category[categories[0].category_id][0].question }}" 
+                                    data-answer="{{ clues_by_category[categories[0].category_id][0].answer }}">
+                                    <span class="value">Click to Reveal</span>
                                 </li>
                             </ul>
                         </td>
@@ -49,11 +51,11 @@
                         <td>
                             {% if row < clues|length %}
                             <ul>
-                                <li>
-                                    <strong>Value:</strong> {{ clues[row].value }}<br>
-                                    <strong>Question:</strong> {{ clues[row].question }}<br>
-                                    <strong>Answer:</strong> {{ clues[row].answer }}
-                                    {% if clues[row].is_daily_double %}<em>(Daily Double)</em>{% endif %}
+                                {% set is_daily_double = clues[row].is_daily_double %}
+                                <li class="{% if is_daily_double %}daily-double{% endif %}" 
+                                    data-question="{{ clues[row].question }}" 
+                                    data-answer="{{ clues[row].answer }}">
+                                    <span class="value">${{ board_values[row] }}</span>
                                 </li>
                             </ul>
                             {% else %}

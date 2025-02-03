@@ -99,4 +99,28 @@ def game(game_id):
             FROM clues
             WHERE category_id = ?
             ORDER BY id
-        """, (c
+        """, (category_id,)).fetchall()
+
+        # Assign clues correctly
+        if final_jeopardy_category and category['category_id'] == final_jeopardy_category['category_id']:
+            final_jeopardy_clue = next((clue for clue in clues if clue['is_final_jeopardy']), None)
+        else:
+            clues_by_category[category_id] = clues
+
+    # Debugging logs
+    logging.debug(f"Final Jeopardy Category: {final_jeopardy_category}")
+    logging.debug(f"Final Jeopardy Clue: {final_jeopardy_clue}")
+
+    # Ensure Final Jeopardy appears correctly
+    if final_jeopardy_category and final_jeopardy_clue:
+        grouped_categories['Final Jeopardy'] = [final_jeopardy_category]
+        clues_by_category[final_jeopardy_category['category_id']] = [final_jeopardy_clue]
+    
+    return render_template(
+        'game.html',
+        grouped_categories=grouped_categories,
+        clues_by_category=clues_by_category
+    )
+
+if __name__ == '__main__':
+    app.run(debug=True)

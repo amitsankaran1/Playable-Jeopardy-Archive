@@ -92,3 +92,37 @@ td ul li span.value {
     border-color: #060CE9 !important;
     font-size: 1.5rem !important;
 }
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    color: #000;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    text-align: center;
+    width: 50%;
+    max-width: 500px;
+    z-index: 1000;
+}
+
+.popup-content {
+    font-size: 1.5rem;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: red;
+}
+
+.answered {
+    background-color: #1A1A1A !important;
+    border: 2px solid #060CE9 !important;
+}

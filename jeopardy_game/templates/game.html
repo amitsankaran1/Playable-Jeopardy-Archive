@@ -13,35 +13,58 @@
     {% for round_name, categories in grouped_categories.items() %}
     <div class="round">
         <h2>{{ round_name }}</h2>
-        <table>
-            <tr>
-                {% for category in categories %}
-                    <th>{{ category.category_name }}</th>
+        {% if round_name == 'Final Jeopardy' %}
+            {% if categories %}
+                <table>
+                    <tr>
+                        <th>{{ categories[0].category_name }}</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% set clue = clues_by_category[categories[0].category_id][0] %}
+                            <ul>
+                                <li>
+                                    <strong>Question:</strong> {{ clue.question }}<br>
+                                    <strong>Answer:</strong> {{ clue.answer }}
+                                    <em>(Final Jeopardy)</em>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            {% else %}
+                <p>No Final Jeopardy clues available.</p>
+            {% endif %}
+        {% else %}
+            <table>
+                <tr>
+                    {% for category in categories %}
+                        <th>{{ category.category_name }}</th>
+                    {% endfor %}
+                </tr>
+                {% for row in range(5) %}
+                <tr>
+                    {% for category in categories %}
+                        {% set clues = clues_by_category[category.category_id] %}
+                        <td>
+                            {% if row < clues|length %}
+                            <ul>
+                                <li>
+                                    <strong>Value:</strong> {{ clues[row].value }}<br>
+                                    <strong>Question:</strong> {{ clues[row].question }}<br>
+                                    <strong>Answer:</strong> {{ clues[row].answer }}
+                                    {% if clues[row].is_daily_double %}<em>(Daily Double)</em>{% endif %}
+                                </li>
+                            </ul>
+                            {% else %}
+                            &nbsp;
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
                 {% endfor %}
-            </tr>
-            {% for row in range(5) %}
-            <tr>
-                {% for category in categories %}
-                    {% set clues = clues_by_category[category.category_id] %}
-                    <td>
-                        {% if row < clues|length %}
-                        <ul>
-                            <li>
-                                <strong>Value:</strong> {{ clues[row].value }}<br>
-                                <strong>Question:</strong> {{ clues[row].question }}<br>
-                                <strong>Answer:</strong> {{ clues[row].answer }}
-                                {% if clues[row].is_daily_double %}<em>(Daily Double)</em>{% endif %}
-                                {% if clues[row].is_final_jeopardy %}<em>(Final Jeopardy)</em>{% endif %}
-                            </li>
-                        </ul>
-                        {% else %}
-                        &nbsp;
-                        {% endif %}
-                    </td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </table>
+            </table>
+        {% endif %}
     </div>
     {% endfor %}
 

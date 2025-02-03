@@ -1,5 +1,6 @@
 from flask import Flask, render_template, g, abort
 import sqlite3
+import logging
 
 from pathlib import Path
 
@@ -11,6 +12,8 @@ DATABASE = BASE_DIR / 'jeopardy.db'
 
 app = Flask(__name__)
 
+# Setup logging for debugging
+logging.basicConfig(level=logging.DEBUG)
 
 def get_db():
     """Connect to the database and set up row factory for dict-like access."""
@@ -60,27 +63,34 @@ def game(game_id):
     if not game_exists:
         abort(404, description="Game not found")
 
-    # Fetch categories grouped by round
+    # Fetch categories
     categories = db.execute("""
         SELECT id AS category_id, name AS category_name, round
         FROM categories
         WHERE game_id = ?
-        ORDER BY round, id
+        ORDER BY id
     """, (game_id,)).fetchall()
 
-    # Handle potential mismatches in round names
     grouped_categories = {
         'Jeopardy Round': [],
         'Double Jeopardy Round': [],
         'Final Jeopardy': []
     }
-    for category in categories:
-        round_name = category['round']
-        if round_name not in grouped_categories:
-            grouped_categories[round_name] = []
-        grouped_categories[round_name].append(category)
 
-    # Fetch clues organized by category
+    final_jeopardy_category = None
+    final_jeopardy_clue = None
+
+    # Assign categories correctly
+    for category in categories:
+        round_name = category['round'].strip().lower()
+        if round_name == 'final jeopardy':
+            final_jeopardy_category = category
+        elif 'double jeopardy' in round_name:
+            grouped_categories['Double Jeopardy Round'].append(category)
+        elif 'jeopardy' in round_name:
+            grouped_categories['Jeopardy Round'].append(category)
+
+    # Fetch clues
     clues_by_category = {}
     for category in categories:
         category_id = category['category_id']
@@ -90,8 +100,22 @@ def game(game_id):
             WHERE category_id = ?
             ORDER BY id
         """, (category_id,)).fetchall()
-        clues_by_category[category_id] = clues
 
+        # Assign clues correctly
+        if final_jeopardy_category and category['category_id'] == final_jeopardy_category['category_id']:
+            final_jeopardy_clue = next((clue for clue in clues if clue['is_final_jeopardy']), None)
+        else:
+            clues_by_category[category_id] = clues
+
+    # Debugging logs
+    logging.debug(f"Final Jeopardy Category: {final_jeopardy_category}")
+    logging.debug(f"Final Jeopardy Clue: {final_jeopardy_clue}")
+
+    # Ensure Final Jeopardy appears correctly
+    if final_jeopardy_category and final_jeopardy_clue:
+        grouped_categories['Final Jeopardy'] = [final_jeopardy_category]
+        clues_by_category[final_jeopardy_category['category_id']] = [final_jeopardy_clue]
+    
     return render_template(
         'game.html',
         grouped_categories=grouped_categories,

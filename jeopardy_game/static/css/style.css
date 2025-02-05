@@ -192,3 +192,119 @@ td ul li span.value {
 .reveal-answer-btn:hover {
     background-color: #0056b3;
 }
+
+/* Score Tracking Styles */
+.score-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+.player-controls {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+#add-player-btn {
+    background-color: #060CE9;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    border-radius: 5px;
+}
+
+#player-name-input {
+    padding: 8px;
+    font-size: 1.1rem;
+    margin: 0 10px;
+}
+
+.players-list {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.player-card {
+    background-color: #060CE9;
+    padding: 15px;
+    border-radius: 5px;
+    min-width: 200px;
+    text-align: center;
+}
+
+.player-name {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.player-score {
+    font-size: 2rem;
+    color: #F3D676;
+    font-weight: bold;
+}
+
+.score-buttons {
+    margin-top: 10px;
+}
+
+.score-button {
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 3px;
+}
+
+.correct-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.wrong-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Update popup styles */
+.popup-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.wager-section {
+    margin: 20px 0;
+    text-align: center;
+}
+
+#wager-input {
+    padding: 8px;
+    font-size: 1.2rem;
+    width: 150px;
+    margin: 0 10px;
+    text-align: center;
+}
+
+#confirm-wager-btn {
+    background-color: #060CE9;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    border-radius: 5px;
+}
+
+.daily-double-header {
+    color: #F3D676;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}

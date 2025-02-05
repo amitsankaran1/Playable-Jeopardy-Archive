@@ -9,6 +9,16 @@
 
 <body>
     <h1>Jeopardy Game</h1>
+    
+    <div class="score-container">
+        <div class="player-controls">
+            <button id="add-player-btn">Add Player</button>
+            <input type="text" id="player-name-input" placeholder="Player Name" style="display: none;">
+        </div>
+        <div id="players-list" class="players-list">
+            <!-- Players will be added here dynamically -->
+        </div>
+    </div>
 
     {% set board_values = [200, 400, 600, 800, 1000] %}
 

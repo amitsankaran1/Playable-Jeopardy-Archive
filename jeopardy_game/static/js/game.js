@@ -134,6 +134,17 @@ function getMaximumWager() {
     return Math.max(highestScore, maxClueValue);
 }
 
+function checkRoundComplete(roundElement) {
+    const unansweredClues = roundElement.querySelectorAll('td ul li:not(.answered)');
+    return unansweredClues.length === 0;
+}
+
+function showNextRoundButton(roundElement, text, nextState) {
+    if (checkRoundComplete(roundElement)) {
+        addNextRoundButton(text, nextState);
+    }
+}
+
 function showPopup(clue, isDailyDouble, isFinalJeopardy) {
     currentValue = parseInt(clue.querySelector('.value').textContent.replace('$', ''));
 
@@ -144,43 +155,63 @@ function showPopup(clue, isDailyDouble, isFinalJeopardy) {
     let popup = document.createElement("div");
     popup.classList.add("popup");
 
-    let header = "";
+    // Create popup content
     if (isDailyDouble) {
-        clue.classList.add('revealed');
-        header = `
-            <h2 class='daily-double-header'>Daily Double!</h2>
-            <div class="wager-section">
-                <p>Current maximum wager: $${getMaximumWager()}</p>
-                <input type="number" id="wager-input" min="0" max="${getMaximumWager()}" placeholder="Enter wager">
-                <button id="confirm-wager-btn">Confirm Wager</button>
-            </div>
-        `;
-    } else if (isFinalJeopardy) {
-        header = "<h2 class='final-jeopardy-header'>Final Jeopardy!</h2>";
-    }
-
-    popup.innerHTML = `
-        <div class="popup-content">
-            <span class="close-btn">&times;</span>
-            ${header}
-            <div class="question-section" style="${isDailyDouble ? 'display: none;' : ''}">
-                <p><strong>Question:</strong> ${clue.dataset.question}</p>
-                <button class="reveal-answer-btn">Reveal Answer</button>
-                <p class="hidden-answer" style="display: none;"><strong>Answer:</strong> ${clue.dataset.answer}</p>
-                <div class="popup-controls" style="display: none;">
-                    ${players.map(player => `
-                        <div class="player-scoring">
-                            <div>${player.name}</div>
-                            <button class="score-button correct-btn" data-player-id="${player.id}" data-correct="true">Correct</button>
-                            <button class="score-button wrong-btn" data-player-id="${player.id}" data-correct="false">Wrong</button>
-                        </div>
-                    `).join("")}
+        popup.innerHTML = `
+            <div class="popup-content">
+                <span class="close-btn">&times;</span>
+                <h2 class='daily-double-header'>Daily Double!</h2>
+                <div class="wager-section">
+                    <p>Current maximum wager: $${getMaximumWager()}</p>
+                    <input type="number" id="wager-input" min="0" max="${getMaximumWager()}" placeholder="Enter wager">
+                    <button id="confirm-wager-btn">Confirm Wager</button>
+                </div>
+                <div class="question-section" style="display: none;">
+                    <p><strong>Question:</strong> ${clue.dataset.question}</p>
+                    <p class="hidden-answer" style="display: none;"><strong>Answer:</strong> ${clue.dataset.answer}</p>
+                    <button class="reveal-answer-btn">Reveal Answer</button>
+                    <div class="popup-controls" style="display: none;">
+                        ${players.map(player => `
+                            <div class="player-scoring">
+                                <div>${player.name}</div>
+                                <button class="score-button correct-btn" data-player-id="${player.id}" data-correct="true">Correct</button>
+                                <button class="score-button wrong-btn" data-player-id="${player.id}" data-correct="false">Wrong</button>
+                            </div>
+                        `).join("")}
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
+    } else {
+        popup.innerHTML = `
+            <div class="popup-content">
+                <span class="close-btn">&times;</span>
+                <div class="question-section">
+                    <p><strong>Question:</strong> ${clue.dataset.question}</p>
+                    <p class="hidden-answer" style="display: none;"><strong>Answer:</strong> ${clue.dataset.answer}</p>
+                    <button class="reveal-answer-btn">Reveal Answer</button>
+                    <div class="popup-controls" style="display: none;">
+                        ${players.map(player => `
+                            <div class="player-scoring">
+                                <div>${player.name}</div>
+                                <button class="score-button correct-btn" data-player-id="${player.id}" data-correct="true">Correct</button>
+                                <button class="score-button wrong-btn" data-player-id="${player.id}" data-correct="false">Wrong</button>
+                            </div>
+                        `).join("")}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 
     document.body.appendChild(popup);
+
+    // Event Listeners
+    const closeBtn = popup.querySelector(".close-btn");
+    closeBtn.addEventListener("click", () => {
+        console.log('Close button clicked');
+        closePopup(clue, popup, overlay);
+    });
 
     if (isDailyDouble) {
         const wagerInput = popup.querySelector("#wager-input");
@@ -202,10 +233,6 @@ function showPopup(clue, isDailyDouble, isFinalJeopardy) {
         });
     }
 
-    popup.querySelector(".close-btn").addEventListener("click", () => {
-        closePopup(clue, popup, overlay);
-    });
-
     const revealButton = popup.querySelector(".reveal-answer-btn");
     const answerElement = popup.querySelector(".hidden-answer");
     const popupControls = popup.querySelector(".popup-controls");
@@ -226,20 +253,44 @@ function showPopup(clue, isDailyDouble, isFinalJeopardy) {
     });
 
     overlay.addEventListener("click", () => {
+        console.log('Overlay clicked');
         closePopup(clue, popup, overlay);
     });
 }
 
 function closePopup(clue, popup, overlay) {
-    popup.remove();
-    overlay.remove();
-    clue.innerHTML = "";
-    clue.classList.add("answered");
+    console.log('Closing popup');
+    if (popup && popup.parentNode) {
+        popup.remove();
+    }
+    if (overlay && overlay.parentNode) {
+        overlay.remove();
+    }
+    if (clue) {
+        clue.innerHTML = "";
+        clue.classList.add("answered");
+    }
+
+    // Check if round is complete
+    const currentRound = document.querySelector('.round[style*="display: block"]');
+    if (currentRound) {
+        if (currentRound.dataset.round === "jeopardy") {
+            showNextRoundButton(currentRound, 'Continue to Double Jeopardy', GAME_STATES.DOUBLE_JEOPARDY);
+        } else if (currentRound.dataset.round === "double_jeopardy") {
+            showNextRoundButton(currentRound, 'Continue to Final Jeopardy', GAME_STATES.FINAL_JEOPARDY);
+        }
+    }
 }
 
 function transitionToState(newState) {
     console.log('Transitioning to state:', newState);
     currentState = newState;
+    
+    // Remove any existing next round button
+    const existingButton = document.querySelector('.next-round-btn');
+    if (existingButton) {
+        existingButton.remove();
+    }
     
     // Hide all sections first
     document.querySelectorAll('.round').forEach(round => {
@@ -251,16 +302,23 @@ function transitionToState(newState) {
         scoreContainer.style.display = 'block';
     }
     
+    // Remove player controls and start game button when game begins
+    if (newState !== GAME_STATES.PLAYER_SELECTION) {
+        const playerControls = document.querySelector('.player-controls');
+        const startGameBtn = document.getElementById('start-game-btn');
+        if (playerControls) playerControls.remove();
+        if (startGameBtn) startGameBtn.remove();
+    }
+    
     switch (newState) {
         case GAME_STATES.PLAYER_SELECTION:
-            // Already showing score container
             break;
             
         case GAME_STATES.JEOPARDY:
             const jeopardyRound = document.querySelector('[data-round="jeopardy"]');
             if (jeopardyRound) {
                 jeopardyRound.style.display = 'block';
-                addNextRoundButton('Continue to Double Jeopardy', GAME_STATES.DOUBLE_JEOPARDY);
+                // Don't add next round button immediately
             } else {
                 console.error('Jeopardy round element not found');
             }
@@ -270,7 +328,7 @@ function transitionToState(newState) {
             const doubleJeopardyRound = document.querySelector('[data-round="double_jeopardy"]');
             if (doubleJeopardyRound) {
                 doubleJeopardyRound.style.display = 'block';
-                addNextRoundButton('Continue to Final Jeopardy', GAME_STATES.FINAL_JEOPARDY);
+                // Don't add next round button immediately
             } else {
                 console.error('Double Jeopardy round element not found');
             }
@@ -297,5 +355,10 @@ function addNextRoundButton(text, nextState) {
     button.className = 'next-round-btn';
     button.textContent = text;
     button.addEventListener('click', () => transitionToState(nextState));
-    document.querySelector('.score-container').appendChild(button);
+    
+    // Append to the current round div instead of score container
+    const currentRound = document.querySelector('.round[style*="display: block"]');
+    if (currentRound) {
+        currentRound.appendChild(button);
+    }
 }

@@ -1,19 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Season {{ season_id }} Games</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <h1>Season {{ season_id }}</h1>
-    <ul>
-        {% for game in games %}
-            <li>
-                <a href="/game/{{ game['id'] }}">
-                    Game #{{ game['game_number'] }} - {{ game['title'] }} ({{ game['date'] }})
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-    <a href="/">Back to Seasons</a>
+    <div class="container">
+        <h1>Season {{ season_id }}</h1>
+        <a href="{{ url_for('seasons') }}" class="back-link">← Back to Seasons</a>
+        
+        <div class="games-grid">
+            {% for game in games %}
+            <a href="{{ url_for('game', game_id=game.id) }}" class="game-card">
+                <div class="game-number">#{{ game.game_number }}</div>
+                <h3 class="game-title">{{ game.title }}</h3>
+                <div class="game-date">{{ game.date.strftime('%B %d, %Y') if game.date }}</div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
 </body>
 </html>

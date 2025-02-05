@@ -1,7 +1,18 @@
+const GAME_STATES = {
+    PLAYER_SELECTION: 'player_selection',
+    JEOPARDY: 'jeopardy',
+    DOUBLE_JEOPARDY: 'double_jeopardy',
+    FINAL_JEOPARDY: 'final_jeopardy'
+};
+
 let players = [];
 let currentValue = 0;
+let currentState = GAME_STATES.PLAYER_SELECTION;
 
 document.addEventListener("DOMContentLoaded", () => {
+    console.log('DOM Content Loaded');
+    initializeGame();
+    
     // Add player management
     const addPlayerBtn = document.getElementById("add-player-btn");
     const playerNameInput = document.getElementById("player-name-input");
@@ -41,6 +52,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+function initializeGame() {
+    console.log('Initializing game...');
+    
+    // Hide all rounds initially
+    document.querySelectorAll('.round').forEach(round => {
+        round.style.display = 'none';
+    });
+    
+    // Show only player selection initially
+    const playerSection = document.querySelector('.score-container');
+    console.log('Player section found:', playerSection);
+    playerSection.style.display = 'block';
+    
+    // Create and append the Start Game button
+    const startButton = document.createElement('button');
+    startButton.id = 'start-game-btn';
+    startButton.textContent = 'Start Game';
+    startButton.style.display = 'none';  // Hidden until at least one player added
+    startButton.className = 'start-game-btn'; // Add a class for styling
+    playerSection.appendChild(startButton);
+    console.log('Start button created:', startButton);
+    
+    startButton.addEventListener('click', () => {
+        if (players.length > 0) {
+            transitionToState(GAME_STATES.JEOPARDY);
+        } else {
+            alert('Please add at least one player to start the game.');
+        }
+    });
+}
+
 function addPlayer(name) {
     const player = {
         name: name,
@@ -49,6 +91,12 @@ function addPlayer(name) {
     };
     players.push(player);
     updatePlayersDisplay();
+    
+    // Show start button once we have at least one player
+    const startButton = document.getElementById('start-game-btn');
+    if (startButton) {
+        startButton.style.display = 'block';
+    }
 }
 
 function updatePlayersDisplay() {
@@ -65,6 +113,14 @@ function updateScore(playerId, isCorrect) {
     const player = players.find(p => p.id === playerId);
     if (player) {
         player.score += isCorrect ? currentValue : -currentValue;
+        
+        const playerCard = document.querySelector(`[data-player-id="${playerId}"] .player-score`);
+        playerCard.classList.add(isCorrect ? 'score-change-positive' : 'score-change-negative');
+        
+        setTimeout(() => {
+            playerCard.classList.remove('score-change-positive', 'score-change-negative');
+        }, 500);
+        
         updatePlayersDisplay();
     }
 }
@@ -73,10 +129,8 @@ function getMaximumWager() {
     const highestScore = players.length > 0 
         ? Math.max(...players.map(p => p.score))
         : 0;
-
     const isDoubleJeopardy = document.querySelector('h2').textContent.includes('Double');
     const maxClueValue = isDoubleJeopardy ? 2000 : 1000;
-
     return Math.max(highestScore, maxClueValue);
 }
 
@@ -92,6 +146,7 @@ function showPopup(clue, isDailyDouble, isFinalJeopardy) {
 
     let header = "";
     if (isDailyDouble) {
+        clue.classList.add('revealed');
         header = `
             <h2 class='daily-double-header'>Daily Double!</h2>
             <div class="wager-section">
@@ -127,6 +182,26 @@ function showPopup(clue, isDailyDouble, isFinalJeopardy) {
 
     document.body.appendChild(popup);
 
+    if (isDailyDouble) {
+        const wagerInput = popup.querySelector("#wager-input");
+        const confirmWagerBtn = popup.querySelector("#confirm-wager-btn");
+        const questionSection = popup.querySelector(".question-section");
+        const wagerSection = popup.querySelector(".wager-section");
+
+        confirmWagerBtn.addEventListener("click", () => {
+            const wager = parseInt(wagerInput.value);
+            const maxWager = getMaximumWager();
+
+            if (wager >= 0 && wager <= maxWager) {
+                currentValue = wager;
+                wagerSection.style.display = "none";
+                questionSection.style.display = "block";
+            } else {
+                alert(`Please enter a valid wager between $0 and $${maxWager}`);
+            }
+        });
+    }
+
     popup.querySelector(".close-btn").addEventListener("click", () => {
         closePopup(clue, popup, overlay);
     });
@@ -146,27 +221,9 @@ function showPopup(clue, isDailyDouble, isFinalJeopardy) {
             const playerId = parseInt(button.dataset.playerId);
             const isCorrect = button.dataset.correct === "true";
             updateScore(playerId, isCorrect);
+            closePopup(clue, popup, overlay);
         });
     });
-
-    if (isDailyDouble) {
-        const wagerInput = popup.querySelector("#wager-input");
-        const confirmWagerBtn = popup.querySelector("#confirm-wager-btn");
-        const questionSection = popup.querySelector(".question-section");
-
-        confirmWagerBtn.addEventListener("click", () => {
-            const wager = parseInt(wagerInput.value);
-            const maxWager = getMaximumWager();
-
-            if (wager >= 0 && wager <= maxWager) {
-                currentValue = wager;
-                popup.querySelector(".wager-section").style.display = "none";
-                questionSection.style.display = "block";
-            } else {
-                alert(`Please enter a valid wager between $0 and $${maxWager}`);
-            }
-        });
-    }
 
     overlay.addEventListener("click", () => {
         closePopup(clue, popup, overlay);
@@ -178,4 +235,67 @@ function closePopup(clue, popup, overlay) {
     overlay.remove();
     clue.innerHTML = "";
     clue.classList.add("answered");
+}
+
+function transitionToState(newState) {
+    console.log('Transitioning to state:', newState);
+    currentState = newState;
+    
+    // Hide all sections first
+    document.querySelectorAll('.round').forEach(round => {
+        round.style.display = 'none';
+    });
+    
+    const scoreContainer = document.querySelector('.score-container');
+    if (scoreContainer) {
+        scoreContainer.style.display = 'block';
+    }
+    
+    switch (newState) {
+        case GAME_STATES.PLAYER_SELECTION:
+            // Already showing score container
+            break;
+            
+        case GAME_STATES.JEOPARDY:
+            const jeopardyRound = document.querySelector('[data-round="jeopardy"]');
+            if (jeopardyRound) {
+                jeopardyRound.style.display = 'block';
+                addNextRoundButton('Continue to Double Jeopardy', GAME_STATES.DOUBLE_JEOPARDY);
+            } else {
+                console.error('Jeopardy round element not found');
+            }
+            break;
+            
+        case GAME_STATES.DOUBLE_JEOPARDY:
+            const doubleJeopardyRound = document.querySelector('[data-round="double_jeopardy"]');
+            if (doubleJeopardyRound) {
+                doubleJeopardyRound.style.display = 'block';
+                addNextRoundButton('Continue to Final Jeopardy', GAME_STATES.FINAL_JEOPARDY);
+            } else {
+                console.error('Double Jeopardy round element not found');
+            }
+            break;
+            
+        case GAME_STATES.FINAL_JEOPARDY:
+            const finalJeopardyRound = document.querySelector('[data-round="final_jeopardy"]');
+            if (finalJeopardyRound) {
+                finalJeopardyRound.style.display = 'block';
+            } else {
+                console.error('Final Jeopardy round element not found');
+            }
+            break;
+    }
+}
+
+function addNextRoundButton(text, nextState) {
+    const existingButton = document.querySelector('.next-round-btn');
+    if (existingButton) {
+        existingButton.remove();
+    }
+    
+    const button = document.createElement('button');
+    button.className = 'next-round-btn';
+    button.textContent = text;
+    button.addEventListener('click', () => transitionToState(nextState));
+    document.querySelector('.score-container').appendChild(button);
 }

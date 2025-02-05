@@ -23,61 +23,67 @@
     {% set board_values = [200, 400, 600, 800, 1000] %}
 
     {% for round_name, categories in grouped_categories.items() %}
-    <div class="round">
-        <h2>{{ round_name }}</h2>
-        
-        {% if round_name == 'Final Jeopardy' %}
-            {% if categories %}
+        {% if round_name == 'Jeopardy Round' %}
+            <div class="round" data-round="jeopardy" style="display: none;">
+        {% elif round_name == 'Double Jeopardy Round' %}
+            <div class="round" data-round="double_jeopardy" style="display: none;">
+        {% elif round_name == 'Final Jeopardy' %}
+            <div class="round" data-round="final_jeopardy" style="display: none;">
+        {% endif %}
+            <h2>{{ round_name }}</h2>
+            
+            {% if round_name == 'Final Jeopardy' %}
+                {% if categories %}
+                    <table>
+                        <tr>
+                            <th>{{ categories[0].category_name }}</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li class="final-jeopardy-clue" 
+                                        data-question="{{ clues_by_category[categories[0].category_id][0].question }}" 
+                                        data-answer="{{ clues_by_category[categories[0].category_id][0].answer }}">
+                                        <span class="value">Click to Reveal</span>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                {% else %}
+                    <p>No Final Jeopardy clues available.</p>
+                {% endif %}
+            {% else %}
                 <table>
                     <tr>
-                        <th>{{ categories[0].category_name }}</th>
+                        {% for category in categories %}
+                            <th>{{ category.category_name }}</th>
+                        {% endfor %}
                     </tr>
+                    {% for row in range(5) %}
                     <tr>
-                        <td>
-                            <ul>
-                                <li class="final-jeopardy-clue" 
-                                    data-question="{{ clues_by_category[categories[0].category_id][0].question }}" 
-                                    data-answer="{{ clues_by_category[categories[0].category_id][0].answer }}">
-                                    <span class="value">Click to Reveal</span>
-                                </li>
-                            </ul>
-                        </td>
+                        {% for category in categories %}
+                            {% set clues = clues_by_category[category.category_id] %}
+                            <td>
+                                {% if row < clues|length %}
+                                <ul>
+                                    {% set is_daily_double = clues[row].is_daily_double %}
+                                    <li class="{% if is_daily_double %}daily-double{% endif %}" 
+                                        data-question="{{ clues[row].question }}" 
+                                        data-answer="{{ clues[row].answer }}">
+                                        <span class="value">${{ board_values[row] }}</span>
+                                    </li>
+                                </ul>
+                                {% else %}
+                                &nbsp;
+                                {% endif %}
+                            </td>
+                        {% endfor %}
                     </tr>
+                    {% endfor %}
                 </table>
-            {% else %}
-                <p>No Final Jeopardy clues available.</p>
             {% endif %}
-        {% else %}
-            <table>
-                <tr>
-                    {% for category in categories %}
-                        <th>{{ category.category_name }}</th>
-                    {% endfor %}
-                </tr>
-                {% for row in range(5) %}
-                <tr>
-                    {% for category in categories %}
-                        {% set clues = clues_by_category[category.category_id] %}
-                        <td>
-                            {% if row < clues|length %}
-                            <ul>
-                                {% set is_daily_double = clues[row].is_daily_double %}
-                                <li class="{% if is_daily_double %}daily-double{% endif %}" 
-                                    data-question="{{ clues[row].question }}" 
-                                    data-answer="{{ clues[row].answer }}">
-                                    <span class="value">${{ board_values[row] }}</span>
-                                </li>
-                            </ul>
-                            {% else %}
-                            &nbsp;
-                            {% endif %}
-                        </td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </table>
-        {% endif %}
-    </div>
+        </div>
     {% endfor %}
 
     <script src="/static/js/game.js"></script>

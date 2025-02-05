@@ -17,6 +17,12 @@ h1 {
 .round {
     margin: 20px auto;
     max-width: 1200px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.round[style*="display: block"] {
+    opacity: 1;
 }
 
 h2 {
@@ -45,6 +51,30 @@ th {
     font-size: 1.3rem;
     text-transform: uppercase;
     border: 2px solid #fff;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Keep the shine effect if you want */
+th:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+th:hover:after {
+    left: 100%;
 }
 
 td {
@@ -72,13 +102,15 @@ td ul li {
     align-items: center;
     justify-content: center;
     border: 2px solid #fff;
-    transition: background-color 0.3s;
-    font-weight: bold;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 td ul li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
     background-color: #0C1FA0;
-    transform: none;
 }
 
 td ul li span.value {
@@ -111,6 +143,7 @@ td ul li span.value {
     color: #FFFFFF !important;
     border-color: #060CE9 !important;
     font-size: 1.5rem !important;
+    transition: all 0.5s ease;
 }
 
 /* Transparent overlay to block interactions */
@@ -138,6 +171,7 @@ td ul li span.value {
     width: 50%;
     max-width: 500px;
     z-index: 1000;
+    animation: popupAppear 0.3s ease-out forwards;
 }
 
 .popup-content {
@@ -307,4 +341,109 @@ td ul li span.value {
     text-align: center;
     margin-bottom: 20px;
     text-transform: uppercase;
+    animation: flashingText 1.5s infinite;
+}
+
+.daily-double.revealed {
+    animation: dailyDoubleReveal 1s ease-in-out;
+}
+
+/* Daily Double Animation */
+@keyframes dailyDoubleReveal {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes flashingText {
+    0%, 100% { color: #F3D676; }
+    50% { color: #fff; }
+}
+
+/* Score Change Animation */
+@keyframes scoreChange {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); color: #00ff00; }
+    100% { transform: scale(1); }
+}
+
+@keyframes scoreChangeNegative {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); color: #ff0000; }
+    100% { transform: scale(1); }
+}
+
+.score-change-positive {
+    animation: scoreChange 0.5s ease-in-out;
+}
+
+.score-change-negative {
+    animation: scoreChangeNegative 0.5s ease-in-out;
+}
+
+/* Responsive Design Improvements */
+@media (max-width: 768px) {
+    .round {
+        margin: 10px;
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 600px;
+    }
+
+    td ul li {
+        font-size: 1.8rem;
+    }
+
+    th {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .popup {
+        width: 90%;
+        max-width: none;
+    }
+}
+
+/* Popup Animation */
+@keyframes popupAppear {
+    0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+/* Add these new styles */
+.next-round-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: #060CE9;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.next-round-btn:hover {
+    background-color: #0C1FA0;
+}
+
+.start-game-btn {
+    display: block !important; /* Force display when needed */
+    margin: 20px auto;
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.start-game-btn:hover {
+    background-color: #218838;
 }

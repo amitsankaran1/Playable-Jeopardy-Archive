@@ -11,6 +11,7 @@ BASE_DIR = Path(__file__).parent.resolve()
 DATABASE = BASE_DIR / 'jeopardy.db'
 
 app = Flask(__name__)
+app.secret_key = 'your-secret-key-here'
 
 # Setup logging for debugging
 logging.basicConfig(level=logging.DEBUG)
@@ -106,10 +107,6 @@ def game(game_id):
             final_jeopardy_clue = next((clue for clue in clues if clue['is_final_jeopardy']), None)
         else:
             clues_by_category[category_id] = clues
-
-    # Debugging logs
-    logging.debug(f"Final Jeopardy Category: {final_jeopardy_category}")
-    logging.debug(f"Final Jeopardy Clue: {final_jeopardy_clue}")
 
     # Ensure Final Jeopardy appears correctly
     if final_jeopardy_category and final_jeopardy_clue:

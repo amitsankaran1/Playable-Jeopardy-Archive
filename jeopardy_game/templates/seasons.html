@@ -1,21 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeopardy! Seasons</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Jeopardy Seasons</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Jeopardy! Seasons</h1>
-        <div class="seasons-grid">
-            {% for season in seasons %}
-            <a href="{{ url_for('season_games', season_id=season.season_id) }}" class="season-card">
-                <h2>Season {{ season.season_id }}</h2>
-            </a>
-            {% endfor %}
-        </div>
-    </div>
+    <h1>Jeopardy Seasons</h1>
+    <ul>
+        {% for season in seasons %}
+            <li>
+                <a href="/season/{{ season['season_id'] }}">Season {{ season['season_id'] }}</a>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

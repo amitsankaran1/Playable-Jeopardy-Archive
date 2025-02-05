@@ -1,6 +1,7 @@
 from flask import Flask, render_template, g, abort
 import sqlite3
 import logging
+
 from pathlib import Path
 
 # Get the directory where the current script resides
@@ -53,5 +54,70 @@ def season_games(season_id):
     """, (season_id,)).fetchall()
     return render_template('season.html', season_id=season_id, games=games)
 
+@app.route('/game/<game_id>')
+def game(game_id):
+    """Load game data and render the game page."""
+    db = get_db()
+
+    # Validate if the game_id exists in the database
+    game_exists = db.execute("SELECT 1 FROM games WHERE id = ?", (game_id,)).fetchone()
+    if not game_exists:
+        abort(404, description="Game not found")
+
+    # Fetch categories
+    categories = db.execute("""
+        SELECT id AS category_id, name AS category_name, round
+        FROM categories
+        WHERE game_id = ?
+        ORDER BY id
+    """, (game_id,)).fetchall()
+
+    grouped_categories = {
+        'Jeopardy Round': [],
+        'Double Jeopardy Round': [],
+        'Final Jeopardy': []
+    }
+
+    final_jeopardy_category = None
+    final_jeopardy_clue = None
+
+    # Assign categories correctly
+    for category in categories:
+        round_name = category['round'].strip().lower()
+        if round_name == 'final jeopardy':
+            final_jeopardy_category = category
+        elif 'double jeopardy' in round_name:
+            grouped_categories['Double Jeopardy Round'].append(category)
+        elif 'jeopardy' in round_name:
+            grouped_categories['Jeopardy Round'].append(category)
+
+    # Fetch clues
+    clues_by_category = {}
+    for category in categories:
+        category_id = category['category_id']
+        clues = db.execute("""
+            SELECT id, value, question, answer, is_daily_double, is_final_jeopardy
+            FROM clues
+            WHERE category_id = ?
+            ORDER BY id
+        """, (category_id,)).fetchall()
+
+        # Assign clues correctly
+        if final_jeopardy_category and category['category_id'] == final_jeopardy_category['category_id']:
+            final_jeopardy_clue = next((clue for clue in clues if clue['is_final_jeopardy']), None)
+        else:
+            clues_by_category[category_id] = clues
+
+    # Ensure Final Jeopardy appears correctly
+    if final_jeopardy_category and final_jeopardy_clue:
+        grouped_categories['Final Jeopardy'] = [final_jeopardy_category]
+        clues_by_category[final_jeopardy_category['category_id']] = [final_jeopardy_clue]
+    
+    return render_template(
+        'game.html',
+        grouped_categories=grouped_categories,
+        clues_by_category=clues_by_category
+    )
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    app.run(debug=True)

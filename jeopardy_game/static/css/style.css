@@ -15,10 +15,6 @@ h1 {
 }
 
 .round {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
     margin: 20px auto;
     max-width: 1200px;
     opacity: 0;
@@ -157,7 +153,7 @@ td ul li span.value {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* Darker overlay */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
     z-index: 999; /* Ensure it appears below the popup but above other elements */
 }
 /* Popup Styling */
@@ -166,145 +162,27 @@ td ul li span.value {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #060CE9;  /* Jeopardy blue */
-    color: #fff;
-    padding: 30px;
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+    background: #fff;
+    color: #000;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
     border-radius: 10px;
     text-align: center;
-    width: 80%;    /* Increased width */
-    max-width: 800px;  /* Increased max-width */
+    width: 50%;
+    max-width: 500px;
     z-index: 1000;
     animation: popupAppear 0.3s ease-out forwards;
 }
 
 .popup-content {
-    font-size: 2rem;  /* Larger base font size */
+    font-size: 1.5rem;
 }
 
-/* Question text */
-.popup-content p {
-    margin: 30px 0;
-    line-height: 1.4;
-    font-size: 2.2rem;  /* Even larger for questions */
-}
-
-/* Answer text */
-.hidden-answer {
-    display: none;
-    margin-top: 20px;
+/* Headers for special popups */
+.popup-content h2 {
+    color: red;
     font-size: 2rem;
-    font-weight: bold;
-    color: #F3D676;  /* Jeopardy gold */
-}
-
-/* Daily Double header */
-.daily-double-header {
-    color: #F3D676;  /* Jeopardy gold */
-    font-size: 3rem;
-    text-align: center;
-    margin-bottom: 30px;
     text-transform: uppercase;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* Buttons in popup */
-.reveal-answer-btn, 
-.score-button, 
-#confirm-wager-btn {
-    margin: 10px;
-    padding: 12px 24px;
-    font-size: 1.4rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.reveal-answer-btn {
-    background-color: #F3D676;
-    color: #060CE9;
-    font-weight: bold;
-}
-
-.reveal-answer-btn:hover {
-    background-color: #fff;
-}
-
-/* Score buttons */
-.score-button {
-    min-width: 120px;
-}
-
-.correct-btn {
-    background-color: #28a745;
-    color: white;
-}
-
-.wrong-btn {
-    background-color: #dc3545;
-    color: white;
-}
-
-.correct-btn:hover {
-    background-color: #218838;
-}
-
-.wrong-btn:hover {
-    background-color: #c82333;
-}
-
-/* Close button */
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 2rem;
-    cursor: pointer;
-    color: #F3D676;
-    opacity: 0.8;
-    transition: opacity 0.3s;
-}
-
-.close-btn:hover {
-    opacity: 1;
-}
-
-/* Wager section */
-.wager-section {
-    margin: 20px 0;
-}
-
-#wager-input {
-    padding: 12px;
-    font-size: 1.8rem;
-    width: 200px;
-    text-align: center;
-    margin: 10px;
-    border: 2px solid #F3D676;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 5px;
-}
-
-/* Player scoring section */
-.popup-controls {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 30px;
-}
-
-.player-scoring {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
-
-.player-scoring div {
-    font-size: 1.6rem;
-    color: #F3D676;
 }
 
 /* Final Jeopardy header */
@@ -316,6 +194,39 @@ td ul li span.value {
     margin-bottom: 10px;
 }
 
+/* Close button */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: red;
+}
+
+.hidden-answer {
+    display: none; /* Default hidden state */
+    margin-top: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.reveal-answer-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.reveal-answer-btn:hover {
+    background-color: #0056b3;
+}
+
 /* Score Tracking Styles */
 .score-container {
     max-width: 1200px;
@@ -324,34 +235,24 @@ td ul li span.value {
 }
 
 .player-controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    justify-content: center;
-    align-items: center;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+#add-player-btn {
+    background-color: #060CE9;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    border-radius: 5px;
 }
 
 #player-name-input {
     padding: 8px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    order: 1; /* This ensures the input comes first */
-}
-
-#add-player-btn {
-    padding: 8px 16px;
-    font-size: 1rem;
-    background-color: #060CE9;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    order: 2; /* This puts the button second */
-}
-
-#add-player-btn:hover {
-    background-color: #0509B8;
+    font-size: 1.1rem;
+    margin: 0 10px;
 }
 
 .players-list {
@@ -409,6 +310,38 @@ td ul li span.value {
     justify-content: center;
     gap: 10px;
     margin-top: 15px;
+}
+
+.wager-section {
+    margin: 20px 0;
+    text-align: center;
+}
+
+#wager-input {
+    padding: 8px;
+    font-size: 1.2rem;
+    width: 150px;
+    margin: 0 10px;
+    text-align: center;
+}
+
+#confirm-wager-btn {
+    background-color: #060CE9;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    border-radius: 5px;
+}
+
+.daily-double-header {
+    color: #F3D676;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    animation: flashingText 1.5s infinite;
 }
 
 .daily-double.revealed {
@@ -469,16 +402,8 @@ td ul li span.value {
     }
 
     .popup {
-        width: 95%;
-        padding: 20px;
-    }
-
-    .popup-content {
-        font-size: 1.6rem;
-    }
-
-    .popup-content p {
-        font-size: 1.8rem;
+        width: 90%;
+        max-width: none;
     }
 }
 
@@ -490,11 +415,12 @@ td ul li span.value {
 
 /* Add these new styles */
 .next-round-btn {
+    display: block;
     margin: 20px auto;
-    padding: 15px 30px;
-    font-size: 1.5rem;
+    padding: 10px 20px;
+    font-size: 1.2rem;
     background-color: #060CE9;
-    color: white;
+    color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -502,7 +428,7 @@ td ul li span.value {
 }
 
 .next-round-btn:hover {
-    background-color: #0509B8;
+    background-color: #0C1FA0;
 }
 
 .start-game-btn {
@@ -520,114 +446,4 @@ td ul li span.value {
 
 .start-game-btn:hover {
     background-color: #218838;
-}
-
-/* Container */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Back Link */
-.back-link {
-    display: inline-block;
-    margin: 20px 0;
-    color: #060CE9;
-    text-decoration: none;
-    font-size: 1.1rem;
-}
-
-.back-link:hover {
-    text-decoration: underline;
-}
-
-/* Seasons Grid */
-.seasons-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
-}
-
-.season-card {
-    background-color: #060CE9;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    text-decoration: none;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.season-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Games Grid */
-.games-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
-}
-
-.game-card {
-    background-color: white;
-    border: 2px solid #060CE9;
-    border-radius: 10px;
-    padding: 20px;
-    text-decoration: none;
-    color: #333;
-    transition: transform 0.2s, box-shadow 0.2s;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    height: 160px;  /* Fixed height */
-    position: relative;
-}
-
-.game-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.game-number {
-    color: #060CE9;
-    font-weight: bold;
-    font-size: 1.2rem;
-    margin-bottom: 5px;
-}
-
-.game-title {
-    font-size: 1.3rem;
-    margin: 0;
-    color: #333;
-    /* Handle text overflow */
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;  /* Limit to 2 lines */
-    text-overflow: ellipsis;
-    flex-grow: 1;
-}
-
-.game-date {
-    color: #666;
-    font-size: 0.9rem;
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .seasons-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    }
-    
-    .games-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    }
 }

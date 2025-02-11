@@ -1,17 +1,18 @@
+/* Base styles (mobile-first) */
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
-    padding: 20px;
-    background-color: #0A0A2C;  /* Darker blue background */
+    padding: 10px;
+    background-color: #0A0A2C;
     color: #fff;
     min-height: 100vh;
 }
 
 h1 {
     text-align: center;
-    font-size: 3.5rem;
+    font-size: 2rem;
     font-weight: 700;
-    margin: 20px 0;
+    margin: 10px 0;
     color: #fff;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -21,11 +22,10 @@ h2 {
     text-align: center;
     background-color: #1414BE;
     color: #fff;
-    padding: 20px;
-    font-size: 2.2rem;
-    margin: 20px 0;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    font-size: 1.4rem;
+    margin: 15px 0;
+    border-radius: 8px;
 }
 
 .category-container {
@@ -41,13 +41,12 @@ h2 {
 
 .clue-card {
     background-color: #1414BE;
-    padding: 25px;
+    padding: 15px;
     text-align: center;
     cursor: pointer;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .clue-card:hover {
@@ -56,7 +55,7 @@ h2 {
 }
 
 .clue-value {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
     color: #F3D676;
     font-weight: 700;
 }
@@ -224,12 +223,12 @@ td ul li span.value {
     transform: translate(-50%, -50%);
     background: #060CE9;
     color: white;
-    padding: 20px;
+    padding: 15px;
     box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
     border-radius: 10px;
     text-align: center;
-    width: 50%;
-    max-width: 500px;
+    width: 90%;
+    max-width: none;
     z-index: 1000;
     animation: popupAppear 0.3s ease-out forwards;
 }
@@ -274,32 +273,32 @@ td ul li span.value {
 .button-container {
     display: flex;
     justify-content: center;
-    gap: 20px;  /* Increase gap between buttons */
-    margin: 20px 0;
+    gap: 10px;
+    margin: 15px 0;
 }
 
 .reveal-answer-btn {
     background-color: #1414BE;
     color: #F3D676;
     border: 2px solid #F3D676;
-    padding: 15px 40px;  /* Wider padding */
-    font-size: 1.3rem;
+    padding: 10px 20px;
+    font-size: 1rem;
     cursor: pointer;
     border-radius: 8px;
     transition: all 0.3s ease;
-    min-width: 200px;  /* Ensure minimum width */
+    min-width: auto;
 }
 
 .skip-btn {
     background-color: #6c757d;
     color: white;
     border: none;
-    padding: 15px 40px;  /* Match reveal button padding */
-    font-size: 1.3rem;
+    padding: 10px 20px;
+    font-size: 1rem;
     cursor: pointer;
     border-radius: 8px;
     transition: all 0.3s ease;
-    min-width: 120px;  /* Ensure minimum width */
+    min-width: auto;
 }
 
 .reveal-answer-btn:hover, .skip-btn:hover {
@@ -308,18 +307,13 @@ td ul li span.value {
 }
 
 .popup-question {
-    font-size: 1.5rem;
-    margin: 20px;
-    text-align: center;
-    color: white;
+    font-size: 1.2rem;
+    margin: 15px 10px;
 }
 
 .popup-answer {
-    font-size: 1.5rem;
-    margin: 20px;
-    text-align: center;
-    color: #F3D676;
-    background-color: #060CE9;
+    font-size: 1.2rem;
+    margin: 15px 10px;
 }
 
 /* Score Tracking Styles */
@@ -382,11 +376,12 @@ td ul li span.value {
 }
 
 .score-button {
-    padding: 5px 10px;
+    padding: 8px 16px;
     margin: 0 5px;
     cursor: pointer;
     border: none;
     border-radius: 3px;
+    font-size: 0.9rem;
 }
 
 .correct-btn {
@@ -547,7 +542,7 @@ td ul li span.value {
     margin-top: 20px;
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .score-button {
@@ -571,13 +566,13 @@ td ul li span.value {
 
 .score-display {
     text-align: center;
-    font-size: 2.2rem;
+    font-size: 1.5rem;
     color: #F3D676;
-    background-color: #1414BE;  /* Slightly lighter blue */
-    padding: 15px;
-    margin: 20px auto;
-    max-width: 300px;
-    border-radius: 15px;
+    background-color: #1414BE;
+    padding: 10px;
+    margin: 10px auto;
+    max-width: 90%;
+    border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     border: 2px solid rgba(243, 214, 118, 0.3);
 }
@@ -601,8 +596,8 @@ td ul li span.value {
 .date {
     text-align: center;
     color: #F3D676;
-    font-size: 1.4rem;
-    margin: 10px 0 30px 0;
+    font-size: 1rem;
+    margin: 5px 0 15px 0;
     font-weight: 300;
 }
 
@@ -613,7 +608,7 @@ td ul li span.value {
     transform: translate(-50%, -50%);
     background: linear-gradient(135deg, #1414BE 0%, #0A0A2C 100%);
     color: white;
-    padding: 30px;
+    padding: 20px;
     border-radius: 20px;
     text-align: center;
     z-index: 1000;
@@ -633,9 +628,9 @@ td ul li span.value {
 }
 
 .results-grid {
-    font-size: 2rem;
+    font-size: 1.5rem;
     margin: 20px 0;
-    letter-spacing: 5px;
+    letter-spacing: 3px;
 }
 
 .share-button {
@@ -667,8 +662,8 @@ td ul li span.value {
 }
 
 .game-info {
-    margin-top: 40px;
-    padding: 25px;
+    margin-top: 20px;
+    padding: 15px;
     background-color: #1414BE;
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -684,7 +679,7 @@ td ul li span.value {
 .game-info-content h3 {
     color: white;
     margin-bottom: 15px;
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     font-weight: 300;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -692,7 +687,7 @@ td ul li span.value {
 
 .game-info-content p {
     margin: 8px 0;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     color: rgba(243, 214, 118, 0.9);
 }
 
@@ -700,4 +695,60 @@ td ul li span.value {
     font-style: italic;
     color: #fff;
     opacity: 0.9;
+}
+
+/* Media queries for larger screens */
+@media (min-width: 768px) {
+    body {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 3.5rem;
+    }
+
+    .date {
+        font-size: 1.4rem;
+    }
+
+    .score-display {
+        font-size: 2.2rem;
+        max-width: 300px;
+    }
+
+    h2 {
+        font-size: 2.2rem;
+    }
+
+    .clue-value {
+        font-size: 2.5rem;
+    }
+
+    .popup {
+        width: 50%;
+        max-width: 500px;
+        padding: 20px;
+    }
+
+    .popup-question, .popup-answer {
+        font-size: 1.5rem;
+    }
+
+    .reveal-answer-btn, .skip-btn {
+        padding: 15px 40px;
+        font-size: 1.3rem;
+    }
+
+    .score-button {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+
+    .game-info-content h3 {
+        font-size: 1.4rem;
+    }
+
+    .game-info-content p {
+        font-size: 1.1rem;
+    }
 }

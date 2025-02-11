@@ -633,3 +633,34 @@ td ul li span.value {
     cursor: pointer;
     margin: 10px;
 }
+
+.game-info {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #060CE9;
+    border-top: 2px solid #F3D676;
+}
+
+.game-info-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    color: #F3D676;
+}
+
+.game-info-content h3 {
+    color: white;
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+}
+
+.game-info-content p {
+    margin: 8px 0;
+    font-size: 1.1rem;
+}
+
+.game-notes {
+    font-style: italic;
+    color: #fff;
+    opacity: 0.9;
+}

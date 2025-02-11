@@ -2,6 +2,7 @@ from flask import Flask, render_template, g, abort, jsonify, request, session
 import sqlite3
 import logging
 from datetime import datetime
+import pytz
 from pathlib import Path
 
 # Get the directory where the current script resides
@@ -27,14 +28,22 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
+def get_eastern_date():
+    """Get the current date in Eastern Time."""
+    eastern = pytz.timezone('America/New_York')
+    return datetime.now(eastern).date()
+
 @app.route('/')
 def index():
     """Display today's category."""
     db = get_db()
-    today = datetime.now().date()
     
-    # Format date for title (e.g., "February 10, 2024")
+    # Use Eastern Time for the date
+    today = get_eastern_date()
     formatted_date = today.strftime("%B %d, %Y")
+    
+    # Pass the date string format that matches the share format
+    share_date = today.strftime("%-m/%-d/%Y")  # Removes leading zeros
     
     # Get total number of categories for rotation
     total_categories = db.execute("""
@@ -65,18 +74,54 @@ def index():
         abort(404)
     
     clues = db.execute("""
-        SELECT id, value, question, answer
-        FROM clues
-        WHERE category_id = ?
-        ORDER BY CAST(REPLACE(REPLACE(value, '$', ''), ',', '') AS INTEGER)
+        WITH numbered_clues AS (
+            SELECT c.*, cat.round,
+                   ROW_NUMBER() OVER (ORDER BY c.id) - 1 as position
+            FROM clues c
+            JOIN categories cat ON c.category_id = cat.id
+            WHERE c.category_id = ?
+        )
+        SELECT id,
+               CASE 
+                   WHEN round LIKE '%Double%' THEN 
+                       CASE position
+                           WHEN 0 THEN '$400'
+                           WHEN 1 THEN '$800'
+                           WHEN 2 THEN '$1200'
+                           WHEN 3 THEN '$1600'
+                           WHEN 4 THEN '$2000'
+                       END
+                   ELSE 
+                       CASE position
+                           WHEN 0 THEN '$200'
+                           WHEN 1 THEN '$400'
+                           WHEN 2 THEN '$600'
+                           WHEN 3 THEN '$800'
+                           WHEN 4 THEN '$1000'
+                       END
+               END as value,
+               question,
+               answer,
+               is_daily_double
+        FROM numbered_clues
+        ORDER BY position
     """, (category['id'],)).fetchall()
+    
+    # Get more details about the original game
+    game_details = db.execute("""
+        SELECT g.id, g.title, g.date, g.game_number, g.season_id
+        FROM games g
+        WHERE g.id = ?
+    """, (category['game_id'],)).fetchone()
     
     return render_template(
         'game.html',
         category=category,
         clues=clues,
         date=formatted_date,
-        title="Daily Double"  # Changed title
+        share_date=share_date,
+        title="Daily Double",
+        game_details=game_details  # Pass game details to template
     )
 
 @app.route('/submit_answer', methods=['POST'])

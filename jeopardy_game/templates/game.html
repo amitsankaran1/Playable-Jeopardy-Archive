@@ -58,6 +58,15 @@
         </div>
     </div>
 
+    <!-- Game Info Footer -->
+    <div class="game-info">
+        <div class="game-info-content">
+            <h3>Original Game Information</h3>
+            <p>Season {{ game_details.season_id }}, Game #{{ game_details.game_number }}</p>
+            <p>Air Date: {{ game_details.date }}</p>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const clueCards = document.querySelectorAll('.clue-card');
@@ -74,14 +83,16 @@
                     currentCard = card;
                     const question = card.querySelector('.clue-question').textContent;
                     const answer = card.querySelector('.clue-answer').textContent;
-                    const value = parseInt(card.querySelector('.clue-value').textContent.replace(/[^0-9]/g, ''));
-                    currentCard.dataset.value = value; // Store the value for scoring
+                    // Always use the displayed value, ignoring any Daily Double wager
+                    const displayValue = card.querySelector('.clue-value').textContent;
+                    const value = parseInt(displayValue.replace(/[^0-9]/g, ''));
+                    currentCard.dataset.value = value;
                     
                     // Reset all button states
                     popup.querySelector('.popup-question').textContent = question;
                     popup.querySelector('.popup-answer').textContent = answer;
                     popup.querySelector('.reveal-answer-btn').style.display = 'block';
-                    popup.querySelector('.skip-btn').style.display = 'block'; // Make sure skip is visible
+                    popup.querySelector('.skip-btn').style.display = 'block';
                     popup.querySelector('.popup-answer').style.display = 'none';
                     popup.querySelector('.answer-buttons').style.display = 'none';
                     
@@ -144,10 +155,9 @@
             }
 
             document.querySelector('.share-button').addEventListener('click', () => {
-                const today = new Date().toLocaleDateString();
                 const categoryName = document.querySelector('h2').textContent;
                 const lines = [
-                    `Daily Double (${today})`,
+                    `Daily Double ({{ share_date }})`,  // Use server-provided date
                     categoryName,
                     `Score: $${score}`,
                     results.join('')

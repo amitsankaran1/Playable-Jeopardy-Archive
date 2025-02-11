@@ -1,25 +1,31 @@
 body {
-    font-family: 'Swiss 911', Arial, sans-serif;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #000;
+    background-color: #0A0A2C;  /* Darker blue background */
     color: #fff;
+    min-height: 100vh;
 }
 
 h1 {
     text-align: center;
-    font-size: 2.5rem;
+    font-size: 3.5rem;
+    font-weight: 700;
     margin: 20px 0;
     color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 h2 {
     text-align: center;
-    background-color: #060CE9;
+    background-color: #1414BE;
     color: #fff;
-    padding: 15px;
-    font-size: 2rem;
+    padding: 20px;
+    font-size: 2.2rem;
     margin: 20px 0;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .category-container {
@@ -34,22 +40,25 @@ h2 {
 }
 
 .clue-card {
-    background-color: #060CE9;
-    padding: 20px;
+    background-color: #1414BE;
+    padding: 25px;
     text-align: center;
     cursor: pointer;
-    border: 2px solid #fff;
-    transition: transform 0.2s;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .clue-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 .clue-value {
-    font-size: 2rem;
+    font-size: 2.5rem;
     color: #F3D676;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 .clue-question {
@@ -186,15 +195,15 @@ td ul li span.value {
 }
 
 .clue-card.answered.correct {
-    background-color: #28a745 !important;  /* Solid green */
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
 }
 
 .clue-card.answered.wrong {
-    background-color: #dc3545 !important;  /* Solid red */
+    background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
 }
 
 .clue-card.answered.skipped {
-    background-color: #6c757d !important;  /* Solid gray */
+    background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
 }
 
 /* Transparent overlay to block interactions */
@@ -265,23 +274,37 @@ td ul li span.value {
 .button-container {
     display: flex;
     justify-content: center;
+    gap: 20px;  /* Increase gap between buttons */
     margin: 20px 0;
 }
 
 .reveal-answer-btn {
-    background-color: #060CE9;
+    background-color: #1414BE;
     color: #F3D676;
     border: 2px solid #F3D676;
-    padding: 15px 30px;
-    font-size: 1.2rem;
+    padding: 15px 40px;  /* Wider padding */
+    font-size: 1.3rem;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 8px;
     transition: all 0.3s ease;
+    min-width: 200px;  /* Ensure minimum width */
 }
 
-.reveal-answer-btn:hover {
-    background-color: #0C1FA0;
+.skip-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 15px 40px;  /* Match reveal button padding */
+    font-size: 1.3rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    min-width: 120px;  /* Ensure minimum width */
+}
+
+.reveal-answer-btn:hover, .skip-btn:hover {
     transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .popup-question {
@@ -548,14 +571,15 @@ td ul li span.value {
 
 .score-display {
     text-align: center;
-    font-size: 2rem;
+    font-size: 2.2rem;
     color: #F3D676;
-    background-color: #060CE9;
-    padding: 10px;
+    background-color: #1414BE;  /* Slightly lighter blue */
+    padding: 15px;
     margin: 20px auto;
-    max-width: 200px;
-    border-radius: 5px;
-    border: 2px solid #F3D676;
+    max-width: 300px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(243, 214, 118, 0.3);
 }
 
 /* Add animation for score changes */
@@ -577,8 +601,9 @@ td ul li span.value {
 .date {
     text-align: center;
     color: #F3D676;
-    font-size: 1.2rem;
-    margin: 10px 0 20px 0;
+    font-size: 1.4rem;
+    margin: 10px 0 30px 0;
+    font-weight: 300;
 }
 
 .results-popup {
@@ -586,13 +611,14 @@ td ul li span.value {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #060CE9;
+    background: linear-gradient(135deg, #1414BE 0%, #0A0A2C 100%);
     color: white;
     padding: 30px;
-    border-radius: 10px;
+    border-radius: 20px;
     text-align: center;
     z-index: 1000;
-    border: 2px solid #F3D676;
+    border: 2px solid rgba(243, 214, 118, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .results-popup h2 {
@@ -614,13 +640,19 @@ td ul li span.value {
 
 .share-button {
     background-color: #F3D676;
-    color: #060CE9;
+    color: #0A0A2C;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 25px;
     font-size: 1.2rem;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    margin: 10px;
+    transition: all 0.2s;
+    font-weight: 600;
+}
+
+.share-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(243, 214, 118, 0.3);
 }
 
 .close-results-btn {
@@ -636,9 +668,10 @@ td ul li span.value {
 
 .game-info {
     margin-top: 40px;
-    padding: 20px;
-    background-color: #060CE9;
-    border-top: 2px solid #F3D676;
+    padding: 25px;
+    background-color: #1414BE;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .game-info-content {
@@ -652,11 +685,15 @@ td ul li span.value {
     color: white;
     margin-bottom: 15px;
     font-size: 1.4rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .game-info-content p {
     margin: 8px 0;
     font-size: 1.1rem;
+    color: rgba(243, 214, 118, 0.9);
 }
 
 .game-notes {

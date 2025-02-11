@@ -3,90 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeopardy Game</title>
+    <title>{{ title }} - {{ date }}</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-
 <body>
-    <h1>Jeopardy Game</h1>
+    <h1>{{ title }}</h1>
+    <div class="date">{{ date }}</div>
     
-    <div class="score-container">
-        <div class="player-controls">
-            <button id="add-player-btn">Add Player</button>
-            <input type="text" id="player-name-input" placeholder="Player Name" style="display: none;">
-        </div>
-        <div id="players-list" class="players-list">
-            <!-- Players will be added here dynamically -->
+    <!-- Add score display -->
+    <div class="score-display">
+        Score: $<span id="current-score">0</span>
+        <button id="share-results" style="display: none;">Share Results</button>
+    </div>
+    
+    <div class="category-container">
+        <h2>{{ category.name }}</h2>
+        <div class="clues-list">
+            {% for clue in clues %}
+            <div class="clue-card" data-id="{{ clue.id }}">
+                <div class="clue-value">{{ clue.value }}</div>
+                <div class="clue-question" style="display: none;">{{ clue.question }}</div>
+                <div class="clue-answer" style="display: none;">{{ clue.answer }}</div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 
-    {% set board_values = [200, 400, 600, 800, 1000] %}
-
-    {% for round_name, categories in grouped_categories.items() %}
-        {% if round_name == 'Jeopardy Round' %}
-            <div class="round" data-round="jeopardy" style="display: none;">
-        {% elif round_name == 'Double Jeopardy Round' %}
-            <div class="round" data-round="double_jeopardy" style="display: none;">
-        {% elif round_name == 'Final Jeopardy' %}
-            <div class="round" data-round="final_jeopardy" style="display: none;">
-        {% endif %}
-            <h2>{{ round_name }}</h2>
-            
-            {% if round_name == 'Final Jeopardy' %}
-                {% if categories %}
-                    <table>
-                        <tr>
-                            <th>{{ categories[0].category_name }}</th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <ul>
-                                    <li class="final-jeopardy-clue" 
-                                        data-question="{{ clues_by_category[categories[0].category_id][0].question }}" 
-                                        data-answer="{{ clues_by_category[categories[0].category_id][0].answer }}">
-                                        <span class="value">Click to Reveal</span>
-                                    </li>
-                                </ul>
-                            </td>
-                        </tr>
-                    </table>
-                {% else %}
-                    <p>No Final Jeopardy clues available.</p>
-                {% endif %}
-            {% else %}
-                <table>
-                    <tr>
-                        {% for category in categories %}
-                            <th>{{ category.category_name }}</th>
-                        {% endfor %}
-                    </tr>
-                    {% for row in range(5) %}
-                    <tr>
-                        {% for category in categories %}
-                            {% set clues = clues_by_category[category.category_id] %}
-                            <td>
-                                {% if row < clues|length %}
-                                <ul>
-                                    {% set is_daily_double = clues[row].is_daily_double %}
-                                    <li class="{% if is_daily_double %}daily-double{% endif %}" 
-                                        data-question="{{ clues[row].question }}" 
-                                        data-answer="{{ clues[row].answer }}">
-                                        <span class="value">${{ board_values[row] }}</span>
-                                    </li>
-                                </ul>
-                                {% else %}
-                                &nbsp;
-                                {% endif %}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </table>
-            {% endif %}
+    <!-- Popup for showing clues -->
+    <div class="overlay" style="display: none;"></div>
+    <div class="popup" style="display: none;">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <p class="popup-question"></p>
+            <div class="button-container">
+                <button class="reveal-answer-btn">Reveal Answer</button>
+                <button class="score-button skip-btn">Skip</button>
+            </div>
+            <p class="popup-answer" style="display: none;"></p>
+            <div class="answer-buttons" style="display: none;">
+                <button class="score-button correct-btn">I got it right!</button>
+                <button class="score-button wrong-btn">I got it wrong</button>
+            </div>
         </div>
-    {% endfor %}
+    </div>
 
-    <script src="/static/js/game.js"></script>
+    <!-- Results Popup -->
+    <div class="results-popup" style="display: none;">
+        <div class="popup-content">
+            <h2>Game Complete!</h2>
+            <div class="final-score">Score: $<span class="final-score-value"></span></div>
+            <div class="results-grid"></div>
+            <button class="share-button">Share Results</button>
+            <button class="close-results-btn">Close</button>
+        </div>
+    </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const clueCards = document.querySelectorAll('.clue-card');
+            const overlay = document.querySelector('.overlay');
+            const popup = document.querySelector('.popup');
+            const closeBtn = document.querySelector('.close-btn');
+            const scoreDisplay = document.getElementById('current-score');
+            let currentCard = null;
+            let score = 0;
+            let results = [];  // Track results for sharing
+            
+            clueCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    currentCard = card;
+                    const question = card.querySelector('.clue-question').textContent;
+                    const answer = card.querySelector('.clue-answer').textContent;
+                    const value = parseInt(card.querySelector('.clue-value').textContent.replace(/[^0-9]/g, ''));
+                    currentCard.dataset.value = value; // Store the value for scoring
+                    
+                    // Reset all button states
+                    popup.querySelector('.popup-question').textContent = question;
+                    popup.querySelector('.popup-answer').textContent = answer;
+                    popup.querySelector('.reveal-answer-btn').style.display = 'block';
+                    popup.querySelector('.skip-btn').style.display = 'block'; // Make sure skip is visible
+                    popup.querySelector('.popup-answer').style.display = 'none';
+                    popup.querySelector('.answer-buttons').style.display = 'none';
+                    
+                    overlay.style.display = 'block';
+                    popup.style.display = 'block';
+                });
+            });
+            
+            popup.querySelector('.reveal-answer-btn').addEventListener('click', function() {
+                this.style.display = 'none';
+                popup.querySelector('.skip-btn').style.display = 'none'; // Hide skip button
+                popup.querySelector('.popup-answer').style.display = 'block';
+                popup.querySelector('.answer-buttons').style.display = 'block';
+            });
+            
+            popup.querySelector('.correct-btn').addEventListener('click', () => {
+                if (currentCard) {
+                    const value = parseInt(currentCard.dataset.value);
+                    score += value;
+                    scoreDisplay.textContent = score;
+                    currentCard.classList.add('answered', 'correct');
+                    results.push('✅');
+                    checkGameComplete();
+                    closePopup();
+                }
+            });
+            
+            popup.querySelector('.wrong-btn').addEventListener('click', () => {
+                if (currentCard) {
+                    const value = parseInt(currentCard.dataset.value);
+                    score -= value;
+                    scoreDisplay.textContent = score;
+                    currentCard.classList.add('answered', 'wrong');
+                    results.push('❌');
+                    checkGameComplete();
+                    closePopup();
+                }
+            });
+            
+            popup.querySelector('.skip-btn').addEventListener('click', () => {
+                if (currentCard) {
+                    popup.querySelector('.reveal-answer-btn').style.display = 'none';
+                    popup.querySelector('.skip-btn').style.display = 'none';
+                    popup.querySelector('.popup-answer').style.display = 'block';
+                    currentCard.classList.add('answered', 'skipped');
+                    results.push('⬜');
+                    checkGameComplete();
+                    setTimeout(closePopup, 1500);
+                }
+            });
+            
+            function checkGameComplete() {
+                if (results.length === 5) {  // All questions answered
+                    const resultsPopup = document.querySelector('.results-popup');
+                    resultsPopup.querySelector('.final-score-value').textContent = score;
+                    resultsPopup.querySelector('.results-grid').textContent = results.join(' ');
+                    resultsPopup.style.display = 'block';
+                    overlay.style.display = 'block';
+                }
+            }
+
+            document.querySelector('.share-button').addEventListener('click', () => {
+                const today = new Date().toLocaleDateString();
+                const categoryName = document.querySelector('h2').textContent;
+                const lines = [
+                    `Daily Double (${today})`,
+                    categoryName,
+                    `Score: $${score}`,
+                    results.join('')
+                ];
+                const shareText = lines.join('\n').trim();
+                
+                if (navigator.share) {
+                    navigator.share({
+                        text: shareText
+                    });
+                } else {
+                    navigator.clipboard.writeText(shareText)
+                        .then(() => alert('Results copied to clipboard!'))
+                        .catch(() => alert('Failed to copy results'));
+                }
+            });
+
+            document.querySelector('.close-results-btn').addEventListener('click', () => {
+                document.querySelector('.results-popup').style.display = 'none';
+                overlay.style.display = 'none';
+            });
+            
+            function closePopup() {
+                overlay.style.display = 'none';
+                popup.style.display = 'none';
+                currentCard = null; // Reset the current card
+            }
+            
+            closeBtn.addEventListener('click', closePopup);
+            overlay.addEventListener('click', closePopup);
+        });
+    </script>
 </body>
 </html>

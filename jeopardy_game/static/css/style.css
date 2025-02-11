@@ -1,17 +1,67 @@
 body {
     font-family: 'Swiss 911', Arial, sans-serif;
     margin: 0;
+    padding: 20px;
     background-color: #000;
     color: #fff;
 }
 
 h1 {
     text-align: center;
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     margin: 20px 0;
     color: #fff;
-    text-transform: uppercase;
-    text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.5);
+}
+
+h2 {
+    text-align: center;
+    background-color: #060CE9;
+    color: #fff;
+    padding: 15px;
+    font-size: 2rem;
+    margin: 20px 0;
+}
+
+.category-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.clues-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.clue-card {
+    background-color: #060CE9;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid #fff;
+    transition: transform 0.2s;
+}
+
+.clue-card:hover {
+    transform: translateY(-2px);
+}
+
+.clue-value {
+    font-size: 2rem;
+    color: #F3D676;
+    font-weight: bold;
+}
+
+.clue-question {
+    font-size: 1.5rem;
+    color: #fff;
+    padding: 20px;
+}
+
+.clue-answer {
+    font-size: 1.5rem;
+    color: #F3D676;
+    padding: 10px;
 }
 
 .round {
@@ -23,16 +73,6 @@ h1 {
 
 .round[style*="display: block"] {
     opacity: 1;
-}
-
-h2 {
-    text-align: center;
-    background-color: #060CE9;
-    color: #fff;
-    padding: 15px;
-    font-size: 2rem;
-    text-transform: uppercase;
-    margin-bottom: 10px;
 }
 
 table {
@@ -138,12 +178,23 @@ td ul li span.value {
 }
 
 /* Styling for answered questions */
-.answered {
-    background-color: #1A1A1A !important;
+.clue-card.answered {
     color: #FFFFFF !important;
     border-color: #060CE9 !important;
     font-size: 1.5rem !important;
     transition: all 0.5s ease;
+}
+
+.clue-card.answered.correct {
+    background-color: #28a745 !important;  /* Solid green */
+}
+
+.clue-card.answered.wrong {
+    background-color: #dc3545 !important;  /* Solid red */
+}
+
+.clue-card.answered.skipped {
+    background-color: #6c757d !important;  /* Solid gray */
 }
 
 /* Transparent overlay to block interactions */
@@ -162,8 +213,8 @@ td ul li span.value {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #fff;
-    color: #000;
+    background: #060CE9;
+    color: white;
     padding: 20px;
     box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
     border-radius: 10px;
@@ -201,7 +252,7 @@ td ul li span.value {
     right: 15px;
     font-size: 2rem;
     cursor: pointer;
-    color: red;
+    color: white;
 }
 
 .hidden-answer {
@@ -211,20 +262,41 @@ td ul li span.value {
     font-weight: bold;
 }
 
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
 .reveal-answer-btn {
-    margin-top: 10px;
-    padding: 10px 20px;
+    background-color: #060CE9;
+    color: #F3D676;
+    border: 2px solid #F3D676;
+    padding: 15px 30px;
     font-size: 1.2rem;
-    background-color: #007BFF;
-    color: white;
-    border: none;
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
 }
 
 .reveal-answer-btn:hover {
-    background-color: #0056b3;
+    background-color: #0C1FA0;
+    transform: translateY(-2px);
+}
+
+.popup-question {
+    font-size: 1.5rem;
+    margin: 20px;
+    text-align: center;
+    color: white;
+}
+
+.popup-answer {
+    font-size: 1.5rem;
+    margin: 20px;
+    text-align: center;
+    color: #F3D676;
+    background-color: #060CE9;
 }
 
 /* Score Tracking Styles */
@@ -363,7 +435,7 @@ td ul li span.value {
 /* Score Change Animation */
 @keyframes scoreChange {
     0% { transform: scale(1); }
-    50% { transform: scale(1.1); color: #00ff00; }
+    50% { transform: scale(1.2); }
     100% { transform: scale(1); }
 }
 
@@ -446,4 +518,118 @@ td ul li span.value {
 
 .start-game-btn:hover {
     background-color: #218838;
+}
+
+.answer-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.score-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.correct-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.wrong-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.score-display {
+    text-align: center;
+    font-size: 2rem;
+    color: #F3D676;
+    background-color: #060CE9;
+    padding: 10px;
+    margin: 20px auto;
+    max-width: 200px;
+    border-radius: 5px;
+    border: 2px solid #F3D676;
+}
+
+/* Add animation for score changes */
+@keyframes scoreChange {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.score-flash {
+    animation: scoreChange 0.3s ease-in-out;
+}
+
+.skip-btn {
+    background-color: #6c757d;  /* Gray color */
+    color: white;
+}
+
+.date {
+    text-align: center;
+    color: #F3D676;
+    font-size: 1.2rem;
+    margin: 10px 0 20px 0;
+}
+
+.results-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #060CE9;
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 1000;
+    border: 2px solid #F3D676;
+}
+
+.results-popup h2 {
+    color: #F3D676;
+    margin-top: 0;
+}
+
+.final-score {
+    font-size: 2rem;
+    color: #F3D676;
+    margin: 20px 0;
+}
+
+.results-grid {
+    font-size: 2rem;
+    margin: 20px 0;
+    letter-spacing: 5px;
+}
+
+.share-button {
+    background-color: #F3D676;
+    color: #060CE9;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+.close-results-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
 }

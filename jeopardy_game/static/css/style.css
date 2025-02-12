@@ -695,6 +695,14 @@ td ul li span.value {
     opacity: 0.9;
 }
 
+.legal-disclaimer {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 15px;
+    line-height: 1.4;
+    font-style: italic;
+}
+
 /* Media queries for larger screens */
 @media (min-width: 768px) {
     body {
@@ -754,5 +762,9 @@ td ul li span.value {
 
     .game-info-content p {
         font-size: 1.1rem;
+    }
+
+    .legal-disclaimer {
+        font-size: 0.8rem;
     }
 }

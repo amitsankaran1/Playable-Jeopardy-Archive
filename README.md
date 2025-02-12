@@ -68,4 +68,4 @@ Feel free to submit issues and pull requests for:
 
 ## License
 
-This project is intended for recreational use only. Jeopardy! is a registered trademark of Jeopardy Productions, Inc. 
+This game was created by a fan and is intended for recreational use only. The Jeopardy! game show and all elements thereof, including but not limited to copyright and trademark thereto, are the property of Jeopardy Productions, Inc. and are protected under law. This website is not affiliated with, sponsored by, or operated by Jeopardy Productions, Inc.

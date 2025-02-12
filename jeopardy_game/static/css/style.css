@@ -298,12 +298,17 @@ td ul li span.value {
     background-color: #6c757d;
     color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 1rem;
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    border-radius: 6px;
     cursor: pointer;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    min-width: 100px;
+    transition: all 0.2s;
+    margin-top: 10px;
+}
+
+.skip-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
 }
 
 .reveal-answer-btn:hover, .skip-btn:hover {
@@ -792,4 +797,78 @@ td ul li span.value {
     color: rgba(255, 255, 255, 0.7);
     line-height: 1.4;
     font-style: italic;
+}
+
+/* Add styles for guess input */
+.guess-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+#guess-input {
+    width: 80%;
+    max-width: 400px;
+    padding: 12px;
+    font-size: 1.1rem;
+    border: 2px solid #F3D676;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 10px;
+}
+
+.submit-guess-btn, .skip-btn {
+    background-color: #F3D676;
+    color: #0A0A2C;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+    min-width: 120px;  /* Ensure consistent width */
+}
+
+.skip-btn {
+    background-color: #6c757d;
+    color: white;
+    margin-top: 10px;
+}
+
+.submit-guess-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(243, 214, 118, 0.3);
+}
+
+.skip-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    #guess-input {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .submit-guess-btn, .skip-btn {
+        width: 100%;
+        margin: 5px 0;
+        min-width: unset;  /* Allow full width on mobile */
+    }
+}
+
+.feedback-message {
+    margin: 10px 0;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.feedback-message.correct {
+    color: #28a745;
+}
+
+.feedback-message.incorrect {
+    color: #dc3545;
 }

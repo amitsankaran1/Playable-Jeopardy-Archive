@@ -35,15 +35,15 @@
         <div class="popup-content">
             <span class="close-btn">&times;</span>
             <p class="popup-question"></p>
+            <div class="guess-container">
+                <input type="text" id="guess-input" placeholder="Enter your answer..." autocomplete="off">
+                <button class="submit-guess-btn">Submit</button>
+                <p class="feedback-message"></p>
+            </div>
             <div class="button-container">
-                <button class="reveal-answer-btn">Reveal Answer</button>
                 <button class="score-button skip-btn">Skip</button>
             </div>
             <p class="popup-answer" style="display: none;"></p>
-            <div class="answer-buttons" style="display: none;">
-                <button class="score-button correct-btn">I got it right!</button>
-                <button class="score-button wrong-btn">I got it wrong</button>
-            </div>
         </div>
     </div>
 
@@ -87,66 +87,130 @@
                     currentCard = card;
                     const question = card.querySelector('.clue-question').textContent;
                     const answer = card.querySelector('.clue-answer').textContent;
-                    // Always use the displayed value, ignoring any Daily Double wager
                     const displayValue = card.querySelector('.clue-value').textContent;
                     const value = parseInt(displayValue.replace(/[^0-9]/g, ''));
                     currentCard.dataset.value = value;
                     
-                    // Reset all button states
+                    // Reset all states
+                    resetPopupState();
+                    
+                    // Set new question content
                     popup.querySelector('.popup-question').textContent = question;
                     popup.querySelector('.popup-answer').textContent = answer;
-                    popup.querySelector('.reveal-answer-btn').style.display = 'block';
-                    popup.querySelector('.skip-btn').style.display = 'block';
-                    popup.querySelector('.popup-answer').style.display = 'none';
-                    popup.querySelector('.answer-buttons').style.display = 'none';
                     
                     overlay.style.display = 'block';
                     popup.style.display = 'block';
                 });
             });
             
-            popup.querySelector('.reveal-answer-btn').addEventListener('click', function() {
+            // Add new function to reset popup state
+            function resetPopupState() {
+                const guessInput = popup.querySelector('#guess-input');
+                const feedbackMessage = popup.querySelector('.feedback-message');
+                const guessContainer = popup.querySelector('.guess-container');
+                const buttonContainer = popup.querySelector('.button-container');
+                
+                // Reset input and feedback
+                guessInput.value = '';
+                feedbackMessage.textContent = '';
+                feedbackMessage.className = 'feedback-message';
+                
+                // Reset display states
+                guessContainer.style.display = 'block';
+                buttonContainer.style.display = 'block';
+                popup.querySelector('.popup-answer').style.display = 'none';
+                
+                // Focus the input when popup opens
+                setTimeout(() => guessInput.focus(), 100);
+            }
+            
+            popup.querySelector('.score-button').addEventListener('click', function() {
                 this.style.display = 'none';
-                popup.querySelector('.skip-btn').style.display = 'none'; // Hide skip button
+                popup.querySelector('.skip-btn').style.display = 'none';
+                
+                // Show guess input instead of immediately showing answer
+                const guessContainer = popup.querySelector('.guess-container');
+                guessContainer.style.display = 'block';
+                popup.querySelector('#guess-input').focus();
+            });
+            
+            // Add guess handling
+            popup.querySelector('.submit-guess-btn').addEventListener('click', submitGuess);
+            popup.querySelector('#guess-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    submitGuess();
+                }
+            });
+            
+            function submitGuess() {
+                const guessInput = popup.querySelector('#guess-input');
+                const guess = guessInput.value.trim().toLowerCase();
+                const answer = popup.querySelector('.popup-answer').textContent.toLowerCase();
+                const feedbackMessage = popup.querySelector('.feedback-message');
+                
+                // Simple string matching - you might want to make this more sophisticated
+                const isCorrect = guess && (
+                    answer.includes(guess) || 
+                    guess.includes(answer) ||
+                    levenshteinDistance(guess, answer) <= 2
+                );
+                
+                // Show feedback and answer
+                feedbackMessage.textContent = isCorrect ? 'Correct!' : 'Not quite...';
+                feedbackMessage.className = 'feedback-message ' + (isCorrect ? 'correct' : 'incorrect');
                 popup.querySelector('.popup-answer').style.display = 'block';
-                popup.querySelector('.answer-buttons').style.display = 'block';
-            });
-            
-            popup.querySelector('.correct-btn').addEventListener('click', () => {
+                
+                // Update score and card state
                 if (currentCard) {
                     const value = parseInt(currentCard.dataset.value);
-                    score += value;
+                    if (isCorrect) {
+                        score += value;
+                        currentCard.classList.add('answered', 'correct');
+                        results.push('✅');
+                    } else {
+                        score -= value;
+                        currentCard.classList.add('answered', 'wrong');
+                        results.push('❌');
+                    }
                     scoreDisplay.textContent = score;
-                    currentCard.classList.add('answered', 'correct');
-                    results.push('✅');
                     checkGameComplete();
-                    closePopup();
+                    
+                    // Close popup after a short delay
+                    setTimeout(closePopup, 2000);
                 }
-            });
+            }
             
-            popup.querySelector('.wrong-btn').addEventListener('click', () => {
-                if (currentCard) {
-                    const value = parseInt(currentCard.dataset.value);
-                    score -= value;
-                    scoreDisplay.textContent = score;
-                    currentCard.classList.add('answered', 'wrong');
-                    results.push('❌');
-                    checkGameComplete();
-                    closePopup();
+            // Simple Levenshtein distance implementation for fuzzy matching
+            function levenshteinDistance(a, b) {
+                if (a.length === 0) return b.length;
+                if (b.length === 0) return a.length;
+                
+                const matrix = [];
+                
+                for (let i = 0; i <= b.length; i++) {
+                    matrix[i] = [i];
                 }
-            });
-            
-            popup.querySelector('.skip-btn').addEventListener('click', () => {
-                if (currentCard) {
-                    popup.querySelector('.reveal-answer-btn').style.display = 'none';
-                    popup.querySelector('.skip-btn').style.display = 'none';
-                    popup.querySelector('.popup-answer').style.display = 'block';
-                    currentCard.classList.add('answered', 'skipped');
-                    results.push('⬜');
-                    checkGameComplete();
-                    setTimeout(closePopup, 1500);
+                
+                for (let j = 0; j <= a.length; j++) {
+                    matrix[0][j] = j;
                 }
-            });
+                
+                for (let i = 1; i <= b.length; i++) {
+                    for (let j = 1; j <= a.length; j++) {
+                        if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                            matrix[i][j] = matrix[i - 1][j - 1];
+                        } else {
+                            matrix[i][j] = Math.min(
+                                matrix[i - 1][j - 1] + 1,
+                                matrix[i][j - 1] + 1,
+                                matrix[i - 1][j] + 1
+                            );
+                        }
+                    }
+                }
+                
+                return matrix[b.length][a.length];
+            }
             
             function checkGameComplete() {
                 if (results.length === 5) {  // All questions answered
@@ -187,7 +251,8 @@
             function closePopup() {
                 overlay.style.display = 'none';
                 popup.style.display = 'none';
-                currentCard = null; // Reset the current card
+                resetPopupState();  // Reset state when closing
+                currentCard = null;
             }
             
             closeBtn.addEventListener('click', closePopup);
@@ -215,6 +280,26 @@
                     })
                     .catch(error => console.error('Error:', error));
             }
+
+            // Update skip functionality
+            popup.querySelector('.skip-btn').addEventListener('click', () => {
+                if (currentCard) {
+                    // Hide both the guess container and skip button immediately
+                    popup.querySelector('.guess-container').style.display = 'none';
+                    popup.querySelector('.button-container').style.display = 'none';
+                    
+                    // Show the answer
+                    popup.querySelector('.popup-answer').style.display = 'block';
+                    
+                    // Update card state and results
+                    currentCard.classList.add('answered', 'skipped');
+                    results.push('⬜');
+                    checkGameComplete();
+                    
+                    // Close popup after delay
+                    setTimeout(closePopup, 2000);
+                }
+            });
         });
     </script>
 </body>

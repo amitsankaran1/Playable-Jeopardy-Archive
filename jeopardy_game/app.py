@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 import pytz
 from pathlib import Path
+from hashlib import sha256
 
 # Get the directory where the current script resides
 BASE_DIR = Path(__file__).parent.resolve()
@@ -33,6 +34,13 @@ def get_eastern_date():
     eastern = pytz.timezone('America/New_York')
     return datetime.now(eastern).date()
 
+def get_category_index(date_str, total_categories):
+    """Get a deterministic but random-feeling category index for a given date."""
+    # Create a hash of the date string
+    date_hash = sha256(date_str.encode()).hexdigest()
+    # Convert first 8 characters of hash to integer and use modulo
+    return int(date_hash[:8], 16) % total_categories
+
 @app.route('/')
 def index():
     """Display today's category."""
@@ -56,9 +64,8 @@ def index():
     if total_categories == 0:
         return "No categories found in database.", 500
         
-    # Use today's date to deterministically select a category
-    day_number = int(today.strftime('%Y%m%d'))
-    category_index = day_number % total_categories
+    # Use hash of date to get category index
+    category_index = get_category_index(today.strftime('%Y%m%d'), total_categories)
     
     # Get today's category and its clues
     category = db.execute("""
@@ -153,10 +160,8 @@ def get_game():
     """Get today's game data."""
     db = get_db()
     
-    # Use Eastern Time for the date
     today = get_eastern_date()
     
-    # Get total number of categories for rotation
     total_categories = db.execute("""
         SELECT COUNT(*) as count 
         FROM categories 
@@ -167,9 +172,8 @@ def get_game():
     if total_categories == 0:
         return jsonify({'error': 'No categories found'}), 500
         
-    # Use today's date to deterministically select a category
-    day_number = int(today.strftime('%Y%m%d'))
-    category_index = day_number % total_categories
+    # Use hash of date to get category index
+    category_index = get_category_index(today.strftime('%Y%m%d'), total_categories)
     
     # Get today's category and its clues
     category = db.execute("""

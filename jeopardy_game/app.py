@@ -148,5 +148,53 @@ def submit_answer():
         'correct_answer': correct_answer['answer']
     })
 
+@app.route('/get_game')
+def get_game():
+    """Get today's game data."""
+    db = get_db()
+    
+    # Use Eastern Time for the date
+    today = get_eastern_date()
+    
+    # Get total number of categories for rotation
+    total_categories = db.execute("""
+        SELECT COUNT(*) as count 
+        FROM categories 
+        WHERE (round = 'Jeopardy' OR round = 'Double Jeopardy')
+        AND id IN (SELECT DISTINCT category_id FROM clues)
+    """).fetchone()['count']
+    
+    if total_categories == 0:
+        return jsonify({'error': 'No categories found'}), 500
+        
+    # Use today's date to deterministically select a category
+    day_number = int(today.strftime('%Y%m%d'))
+    category_index = day_number % total_categories
+    
+    # Get today's category and its clues
+    category = db.execute("""
+        SELECT c.id, c.name, c.game_id, g.date, g.title
+        FROM categories c
+        JOIN games g ON c.game_id = g.id
+        WHERE (round = 'Jeopardy' OR round = 'Double Jeopardy')
+        AND c.id IN (SELECT DISTINCT category_id FROM clues)
+        LIMIT 1 OFFSET ?
+    """, (category_index,)).fetchone()
+    
+    if not category:
+        return jsonify({'error': 'Category not found'}), 404
+    
+    # Get game details
+    game_details = db.execute("""
+        SELECT g.id, g.title, g.date, g.game_number, g.season_id
+        FROM games g
+        WHERE g.id = ?
+    """, (category['game_id'],)).fetchone()
+    
+    return jsonify({
+        'category': dict(category),
+        'game_details': dict(game_details)
+    })
+
 if __name__ == '__main__':
     app.run(debug=True)

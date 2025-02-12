@@ -64,10 +64,11 @@
             <h3>Original Game Information</h3>
             <p>Season {{ game_details.season_id }}, Game #{{ game_details.game_number }}</p>
             <p>Air Date: {{ game_details.date }}</p>
-            <p class="legal-disclaimer">
-                This game was created by a fan and is intended for recreational use only. The Jeopardy! game show and all elements thereof, including but not limited to copyright and trademark thereto, are the property of Jeopardy Productions, Inc. and are protected under law. This website is not affiliated with, sponsored by, or operated by Jeopardy Productions, Inc.
-            </p>
         </div>
+    </div>
+
+    <div class="disclaimer">
+        <p>This game was created by a fan and is intended for recreational use only. The Jeopardy! game show and all elements thereof, including but not limited to copyright and trademark thereto, are the property of Jeopardy Productions, Inc. and are protected under law. This website is not affiliated with, sponsored by, or operated by Jeopardy Productions, Inc.</p>
     </div>
 
     <script>
@@ -191,6 +192,29 @@
             
             closeBtn.addEventListener('click', closePopup);
             overlay.addEventListener('click', closePopup);
+
+            function updateGameInfo(gameDetails) {
+                const gameInfo = document.querySelector('.game-info-content');
+                gameInfo.innerHTML = `
+                    <h3>Original Game Information</h3>
+                    <p>Season ${gameDetails.season_id}, Game #${gameDetails.game_number}</p>
+                    <p>Air Date: ${gameDetails.date}</p>
+                `;
+            }
+
+            // Add this to your existing fetch call when loading new games
+            function loadNewGame() {
+                fetch('/get_game')  // You'll need to create this endpoint
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update game content
+                        // ... existing game update code ...
+
+                        // Update game info
+                        updateGameInfo(data.game_details);
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
         });
     </script>
 </body>

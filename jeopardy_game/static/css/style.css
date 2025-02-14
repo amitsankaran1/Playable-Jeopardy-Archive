@@ -228,18 +228,26 @@ td ul li span.value {
     transform: translate(-50%, -50%);
     background: #1414BE;
     color: white;
-    padding: 15px;
-    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
-    border-radius: 12px;
+    padding: 35px 20px 25px;  /* Adjusted padding */
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
     text-align: center;
-    width: 95%;
-    max-width: none;
+    width: 90%;
+    max-width: 400px;
     z-index: 1000;
     animation: popupAppear 0.3s ease-out forwards;
 }
 
 .popup-content {
-    font-size: 1.5rem;
+    margin-top: 15px;  /* Add space at the top */
+}
+
+.popup-question {
+    font-size: 1.4rem;
+    margin: 0 0 25px 0;
+    line-height: 1.5;
+    padding: 0;
+    font-weight: 400;
 }
 
 /* Headers for special popups */
@@ -261,10 +269,15 @@ td ul li span.value {
 /* Close button */
 .close-btn {
     position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 2rem;
+    top: 12px;          /* Adjusted position */
+    right: 12px;
+    font-size: 1.8rem;
     cursor: pointer;
+    color: rgba(255, 255, 255, 0.8);
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
     color: white;
 }
 
@@ -301,15 +314,17 @@ td ul li span.value {
 }
 
 .skip-btn {
+    width: 75%;          /* Match other buttons */
+    max-width: 250px;    /* Smaller max width */
+    padding: 10px 20px;  /* Keep existing padding */
+    font-size: 1.1rem;
     background-color: #6c757d;
     color: white;
     border: none;
-    padding: 12px 25px;
-    font-size: 1.1rem;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s;
-    min-width: 120px;
+    margin: 10px auto;
 }
 
 .skip-btn:hover {
@@ -323,15 +338,51 @@ td ul li span.value {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-.popup-question {
-    font-size: 1.2rem;
-    margin: 15px 10px;
-    line-height: 1.4;
+/* Input and buttons container */
+.guess-container {
+    margin: 0 auto;
+    text-align: center;
+    width: 100%;        /* Full width */
+    max-width: 320px;   /* Limit container width */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0;         /* Remove padding */
 }
 
-.popup-answer {
-    font-size: 1.2rem;
-    margin: 15px 10px;
+/* Input styling */
+#guess-input,
+.submit-guess-btn,
+.skip-btn {
+    width: 100%;        /* Full width */
+    max-width: none;    /* Remove max-width */
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    margin: 0;          /* Remove margins */
+}
+
+#guess-input:focus {
+    box-shadow: 0 0 0 2px rgba(243, 214, 118, 0.3);
+}
+
+/* Button styling */
+.submit-guess-btn {
+    background-color: #F3D676;
+    color: #0A0A2C;
+}
+
+.skip-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Feedback message */
+.feedback-message {
+    min-height: 24px;    /* Prevent layout shift */
+    margin: 10px 0;
+    font-size: 1.1rem;
+    font-weight: 500;
 }
 
 /* Score Tracking Styles */
@@ -510,21 +561,63 @@ td ul li span.value {
     }
 
     .popup {
-        width: 90%;
-        max-width: none;
+        padding: 30px 15px 20px;  /* Adjusted padding */
     }
 
-    .input-row,
-    .skip-container {
-        flex-direction: column;
-        gap: 5px;
+    .popup-content {
+        margin-top: 10px;  /* Slightly less space on mobile */
     }
-    
+
+    .popup-question {
+        font-size: 1.2rem;
+        margin: 0 0 20px 0;
+    }
+
+    .guess-container {
+        max-width: 300px;
+    }
+
     #guess-input,
     .submit-guess-btn,
     .skip-btn {
-        width: 100%;
-        margin: 5px 0;
+        padding: 10px;
+        font-size: 1rem;
+    }
+
+    .close-btn {
+        top: 10px;
+        right: 10px;
+        font-size: 1.5rem;
+    }
+
+    .feedback-message {
+        font-size: 1rem;
+        margin: 8px 0;
+    }
+
+    .popup-answer {
+        font-size: 1.1rem;
+        margin: 10px 0;
+        padding: 10px;
+    }
+}
+
+/* Add iPhone-specific adjustments */
+@media (max-width: 390px) {
+    .popup {
+        padding: 20px 12px;
+    }
+
+    .popup-question {
+        font-size: 1.1rem;
+        margin: 0 0 15px 0;
+    }
+
+    #guess-input,
+    .submit-guess-btn,
+    .skip-btn {
+        width: 90%;
+        padding: 8px;
     }
 }
 
@@ -815,50 +908,36 @@ td ul li span.value {
 }
 
 /* Add styles for guess input */
-.guess-container {
-    margin: 20px 0;
-    text-align: center;
-}
-
 .input-row {
     display: flex;
+    flex-direction: column;  /* Stack vertically on mobile */
+    align-items: center;     /* Center items */
     gap: 10px;
     margin-bottom: 10px;
-    justify-content: center;
 }
 
-#guess-input {
-    width: 80%;
-    max-width: 400px;
-    padding: 12px;
-    font-size: 1.1rem;
-    border: 2px solid #F3D676;
-    border-radius: 6px;
-    background-color: rgba(255, 255, 255, 0.9);
-}
-
-.submit-guess-btn {
-    background-color: #F3D676;
-    color: #0A0A2C;
-    border: none;
-    padding: 12px 25px;
-    font-size: 1.1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 600;
-}
-
-.feedback-message {
-    margin: 10px 0;
+.popup-answer {
     font-size: 1.2rem;
-    font-weight: 500;
+    margin: 15px 0;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    display: none;
 }
 
-.feedback-message.correct {
-    color: #28a745;
+/* Add disabled button styles */
+.submit-guess-btn.disabled {
+    background-color: #d4bc6a;  /* Lighter version of the original color */
+    color: rgba(10, 10, 44, 0.6);  /* More transparent text */
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
 }
 
-.feedback-message.incorrect {
-    color: #dc3545;
+.skip-btn.disabled {
+    background-color: #8a8e92;  /* Lighter version of the original color */
+    color: rgba(255, 255, 255, 0.6);
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
 }

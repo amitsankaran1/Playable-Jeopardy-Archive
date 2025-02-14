@@ -124,6 +124,11 @@
                 
                 // Focus the input when popup opens
                 setTimeout(() => guessInput.focus(), 100);
+                
+                // Reset button states
+                const submitBtn = popup.querySelector('.submit-guess-btn');
+                submitBtn.classList.remove('disabled');
+                skipBtn.classList.remove('disabled');
             }
             
             // Add guess handling
@@ -136,6 +141,13 @@
             
             function submitGuess() {
                 const guessInput = popup.querySelector('#guess-input');
+                const submitBtn = popup.querySelector('.submit-guess-btn');
+                const skipBtn = popup.querySelector('.skip-btn');
+                
+                // Disable the buttons immediately
+                submitBtn.classList.add('disabled');
+                skipBtn.classList.add('disabled');
+                
                 const guess = guessInput.value.trim().toLowerCase();
                 const answer = popup.querySelector('.popup-answer').textContent.toLowerCase();
                 const feedbackMessage = popup.querySelector('.feedback-message');
@@ -276,8 +288,12 @@
             // Update skip functionality
             popup.querySelector('.skip-btn').addEventListener('click', () => {
                 if (currentCard) {
-                    // Hide both the guess container and skip button immediately
-                    popup.querySelector('.guess-container').style.display = 'none';
+                    const submitBtn = popup.querySelector('.submit-guess-btn');
+                    const skipBtn = popup.querySelector('.skip-btn');
+                    
+                    // Disable the buttons
+                    submitBtn.classList.add('disabled');
+                    skipBtn.classList.add('disabled');
                     
                     // Show the answer
                     popup.querySelector('.popup-answer').style.display = 'block';

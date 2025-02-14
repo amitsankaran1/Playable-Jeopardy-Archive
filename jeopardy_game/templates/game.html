@@ -36,12 +36,14 @@
             <span class="close-btn">&times;</span>
             <p class="popup-question"></p>
             <div class="guess-container">
-                <input type="text" id="guess-input" placeholder="Enter your answer..." autocomplete="off">
-                <button class="submit-guess-btn">Submit</button>
+                <div class="input-row">
+                    <input type="text" id="guess-input" placeholder="Enter your answer..." autocomplete="off">
+                    <button class="submit-guess-btn">Submit</button>
+                </div>
+                <div class="skip-container">
+                    <button class="skip-btn">Skip</button>
+                </div>
                 <p class="feedback-message"></p>
-            </div>
-            <div class="button-container">
-                <button class="score-button skip-btn">Skip</button>
             </div>
             <p class="popup-answer" style="display: none;"></p>
         </div>
@@ -108,7 +110,7 @@
                 const guessInput = popup.querySelector('#guess-input');
                 const feedbackMessage = popup.querySelector('.feedback-message');
                 const guessContainer = popup.querySelector('.guess-container');
-                const buttonContainer = popup.querySelector('.button-container');
+                const skipBtn = popup.querySelector('.skip-btn');
                 
                 // Reset input and feedback
                 guessInput.value = '';
@@ -117,22 +119,12 @@
                 
                 // Reset display states
                 guessContainer.style.display = 'block';
-                buttonContainer.style.display = 'block';
+                skipBtn.style.display = 'block'; // Ensure skip button is visible
                 popup.querySelector('.popup-answer').style.display = 'none';
                 
                 // Focus the input when popup opens
                 setTimeout(() => guessInput.focus(), 100);
             }
-            
-            popup.querySelector('.score-button').addEventListener('click', function() {
-                this.style.display = 'none';
-                popup.querySelector('.skip-btn').style.display = 'none';
-                
-                // Show guess input instead of immediately showing answer
-                const guessContainer = popup.querySelector('.guess-container');
-                guessContainer.style.display = 'block';
-                popup.querySelector('#guess-input').focus();
-            });
             
             // Add guess handling
             popup.querySelector('.submit-guess-btn').addEventListener('click', submitGuess);
@@ -286,7 +278,6 @@
                 if (currentCard) {
                     // Hide both the guess container and skip button immediately
                     popup.querySelector('.guess-container').style.display = 'none';
-                    popup.querySelector('.button-container').style.display = 'none';
                     
                     // Show the answer
                     popup.querySelector('.popup-answer').style.display = 'block';

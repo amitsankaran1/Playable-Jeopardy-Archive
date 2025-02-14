@@ -14,6 +14,15 @@ app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'  # Change this in production
 logging.basicConfig(level=logging.DEBUG)
 
+# Update the CORS configuration
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
+
 def get_db():
     """Connect to the database and set up row factory for dict-like access."""
     db = getattr(g, '_database', None)
@@ -201,4 +210,4 @@ def get_game():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5001)

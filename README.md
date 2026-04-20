@@ -1,71 +1,96 @@
-# Daily Double - A Daily Jeopardy! Category Game
+# Daily Double — Playable Jeopardy! Archive
 
-Daily Double is a web-based game that presents players with a new Jeopardy! category each day. Players can test their knowledge by answering five clues from real Jeopardy! games, track their score, and share their results.
+A web trivia game built on real Jeopardy! categories. Every day features a
+deterministic daily category, and you can hit **Play Again** to pull another
+random category from the archive whenever you want.
 
-## How It Works
+Built with Next.js 15 (App Router) + TypeScript, backed by Postgres (Neon /
+Vercel Postgres). Deploys to Vercel with zero config.
 
-- Each day features a different category from past Jeopardy! games
-- Players are presented with 5 clues of increasing value ($200-$1000)
-- Click on a clue to reveal the question
-- After viewing the question, players can:
-  - Reveal the answer and mark if they got it right or wrong
-  - Skip the question to see the answer without scoring
-- Correct answers add the clue's value to your score
-- Incorrect answers subtract the clue's value
-- After completing all clues, players can share their results with others
+## How it works
 
-## Features
+- Each day, a SHA256 hash of the Eastern-time date selects one category from
+  the archive. Everyone sees the same daily category.
+- You get 5 clues of increasing value (\$200 – \$1,000, or \$400 – \$2,000 for
+  Double Jeopardy categories).
+- Type your answer — fuzzy matching accepts close spellings and partial
+  answers (Levenshtein ≤ 2 plus substring matches).
+- Correct answers add to your score; wrong answers subtract. Skipping is
+  free but reveals the answer without scoring.
+- After 5 clues, share a Wordle-style emoji grid or hit **Play Again** for a
+  brand-new random category.
 
-- Mobile-responsive design
-- Score tracking
-- Daily rotation of categories
-- Share results with emoji grid (similar to Wordle)
-- Original game information displayed
-- Clean, Jeopardy!-inspired UI
+## Local development
 
-## Technical Details
+Requires Node 20+ and pnpm (or npm/yarn).
 
-Built with:
-- Flask (Python web framework)
-- SQLite database
-- HTML/CSS/JavaScript
-- Responsive design for all screen sizes
-- Eastern Time zone support for consistent daily categories
+```bash
+pnpm install
+cp .env.example .env.local   # then fill in DATABASE_URL
+pnpm migrate                 # one-time: loads jeopardy.db into Postgres
+pnpm dev                     # localhost:3000
+```
 
-## Requirements
+### Getting a DATABASE_URL
 
-- Python 3.x
-- Flask
-- SQLite3
-- Additional requirements listed in requirements.txt
+Easiest: create a free Neon project at <https://neon.tech> and copy its
+connection string. On Vercel, attaching a Neon database to your project
+auto-injects `DATABASE_URL` into every environment.
 
-## Installation
+The migration script reads `jeopardy_game/jeopardy.db` (bundled in the repo),
+drops and recreates the `seasons`, `games`, `categories`, `clues` tables,
+and builds a `playable_categories` materialized view for fast daily/random
+selection. It takes a few minutes for the full 322k-clue load.
 
-1. Clone the repository
-2. Install dependencies:
+## Deploy to Vercel
+
+1. Push this repo to GitHub.
+2. Import it in Vercel — it auto-detects Next.js.
+3. Add a Neon (or Vercel Postgres) database; `DATABASE_URL` is injected.
+4. Run the migration once from your local machine against the production
+   `DATABASE_URL`, or from a Vercel one-off shell:
+   ```bash
+   DATABASE_URL="<prod connection string>" pnpm migrate
    ```
-   pip install -r requirements.txt
-   ```
-3. Run the Flask application:
-   ```
-   python app.py
-   ```
+5. Deploy. The `/` route is revalidated hourly; `/api/game/random` is always
+   dynamic.
 
-## Database
+## Project layout
 
-The game uses a SQLite database (jeopardy.db) containing:
-- Categories from real Jeopardy! games
-- Clues with questions and answers
-- Game metadata (season, episode, air date)
+```
+app/
+  layout.tsx          Root layout
+  page.tsx            Server component: loads today's category
+  globals.css         Jeopardy!-themed styling
+  components/
+    GameBoard.tsx     Client component: board, scoring, popup, share
+  api/
+    game/today        GET — today's deterministic category
+    game/random       GET — random category (Play Again)
+    answer            POST — validate a guess against a clue
+lib/
+  db.ts               Neon SQL client + query helpers
+  game.ts             Daily rotation (SHA256), clue value assignment
+  answer.ts           Fuzzy answer matcher (Levenshtein + substring)
+  types.ts            Shared types
+scripts/
+  migrate-sqlite-to-postgres.ts   One-time data load
+jeopardy_game/
+  jeopardy.db         Source SQLite DB (43MB, 322k clues, 32 seasons)
+```
 
-## Contributing
+## Scripts
 
-Feel free to submit issues and pull requests for:
-- Bug fixes
-- UI improvements
-- Feature additions
-- Database updates
+| Command | What it does |
+|---|---|
+| `pnpm dev` | Start dev server on :3000 |
+| `pnpm build` | Production build |
+| `pnpm start` | Serve production build |
+| `pnpm typecheck` | Run `tsc --noEmit` |
+| `pnpm migrate` | Load SQLite → Postgres |
 
-## License
+## License / attribution
 
-This game was created by a fan and is intended for recreational use only. The Jeopardy! game show and all elements thereof, including but not limited to copyright and trademark thereto, are the property of Jeopardy Productions, Inc. and are protected under law. This website is not affiliated with, sponsored by, or operated by Jeopardy Productions, Inc.
+Fan-made, non-commercial. The Jeopardy! trademark and all show content belong
+to Jeopardy Productions, Inc. This project is not affiliated with or
+sponsored by Jeopardy Productions, Inc.

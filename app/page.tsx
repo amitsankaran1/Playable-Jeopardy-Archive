@@ -10,13 +10,16 @@ export default async function HomePage() {
 
   if (!game) {
     return (
-      <main>
-        <h1>Daily Double</h1>
-        <p style={{ padding: 20 }}>
-          No categories available. The database may not be seeded yet — run{" "}
-          <code>pnpm migrate</code> after setting <code>DATABASE_URL</code>.
-        </p>
-      </main>
+      <div className="app-shell">
+        <div className="hero">
+          <div className="hero-eyebrow">Setup Required</div>
+          <h1 className="hero-title">Daily Double</h1>
+          <p className="hero-subtitle">
+            No categories available yet. Set <code>DATABASE_URL</code> and run{" "}
+            <code>pnpm migrate</code> to seed the archive.
+          </p>
+        </div>
+      </div>
     );
   }
 

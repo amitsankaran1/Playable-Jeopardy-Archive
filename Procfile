@@ -1,1 +1,0 @@
-web: gunicorn jeopardy_game.app:app

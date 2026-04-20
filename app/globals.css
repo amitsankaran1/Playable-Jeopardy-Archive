@@ -778,6 +778,31 @@ td ul li span.value {
     margin: 10px;
 }
 
+.play-again-button {
+    background-color: #060CE9;
+    color: #F3D676;
+    border: 2px solid #F3D676;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 10px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.play-again-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(243, 214, 118, 0.3);
+}
+
+.play-again-button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+    box-shadow: none;
+}
+
 .game-info {
     margin-top: 20px;
     margin-bottom: 20px;
